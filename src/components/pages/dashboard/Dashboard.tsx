@@ -143,7 +143,6 @@ function Dashboard() {
                 onPress={() => {
                   router.push("/tenantInfo");
                 }}
-                // isLoading={loading}
               >
                 {"Start Tenant Creation"}
               </Button>
