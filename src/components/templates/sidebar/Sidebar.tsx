@@ -22,7 +22,12 @@ function Sidebar() {
     {
       label: "Tenant Creation",
       icon: <EditFull />,
-      href: "/tenantInfo",
+      href: "/tenant-info",
+    },
+    {
+      label: "File Config",
+      icon: <EditFull />,
+      href: "/file-configs",
     },
     {
       label: "Typography",
@@ -32,7 +37,7 @@ function Sidebar() {
     {
       label: "Color",
       icon: <Color />,
-      href: "/colorTheming",
+      href: "/color-theming",
     },
   ];
 

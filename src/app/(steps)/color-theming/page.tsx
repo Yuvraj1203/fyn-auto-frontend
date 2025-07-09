@@ -1,8 +1,8 @@
 import { Parent } from "@/components/templates";
 import React from "react";
 
-const page = () => {
+const ColorTheming = () => {
   return <Parent>{"hi"}</Parent>;
 };
 
-export default page;
+export default ColorTheming;

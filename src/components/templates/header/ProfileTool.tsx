@@ -2,12 +2,13 @@ import { Images, Gear } from "@/public";
 import Image from "next/image";
 import React from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
+import { CustomImage } from "@/components/atoms";
 
 function ProfileTool() {
   const popoverTrigger = (
     <div className="group inline-flex gap-4 items-center p-2 pr-3 bg-secondaryContainer hover:bg-secondary rounded-full cursor-pointer duration-400">
       <div className="rounded-full">
-        <Image
+        <CustomImage
           src={Images.profile}
           width={32}
           height={32}

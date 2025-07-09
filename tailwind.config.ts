@@ -38,7 +38,7 @@ const config: Config = {
 
         // surfaceVariant: "#dce5dd",
         // onSurfaceVariant: "#404943",
-        // outline: "#707972",
+        outline: "#707972",
         // outlineVariant: "#c0c9c1",
         // shadow: "#000000",
         // scrim: "#000000",
