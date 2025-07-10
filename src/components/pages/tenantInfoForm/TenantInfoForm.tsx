@@ -211,7 +211,7 @@ const TenantInfoForm = () => {
             size={"md"}
             isLoading={loading}
           >
-            {"Save"}
+            {"Proceed"}
           </Button>
         </div>
       </form>

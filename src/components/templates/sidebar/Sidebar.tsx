@@ -50,9 +50,9 @@ function Sidebar() {
         href={item.href}
         className={`${
           isActive
-            ? "bg-primaryContainer text-primary scale-110"
-            : "bg-background text-textColor"
-        } flex items-center gap-4 subTitle font-medium py-2.5 px-4 hover:bg-primaryContainer  hover:text-primary hover:scale-110 rounded-2xl cursor-pointer duration-400`}
+            ? "bg-primaryContainer text-primary py-4"
+            : "bg-background text-textColor hover:py-4"
+        } flex items-center gap-4 subTitle font-medium py-2.5 px-4 hover:bg-primaryContainer  hover:text-primary rounded-2xl cursor-pointer duration-400`}
       >
         <span>{item.icon}</span>
         <span>{item.label}</span>

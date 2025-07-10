@@ -141,7 +141,7 @@ function Dashboard() {
                 variant={"shadow"}
                 size={"md"}
                 onPress={() => {
-                  router.push("/tenantInfo");
+                  router.push("/tenant-info");
                 }}
               >
                 {"Start Tenant Creation"}

@@ -1,3 +1,4 @@
+import { FileConfigMain } from "@/components/pages";
 import { FileDropZone, Parent } from "@/components/templates";
 import React from "react";
 
@@ -11,7 +12,7 @@ const FileConfig = () => {
         </p>
       </div>
       <hr className="" />
-      <FileDropZone />
+      <FileConfigMain />
     </Parent>
   );
 };
