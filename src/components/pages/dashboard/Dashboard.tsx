@@ -9,6 +9,7 @@ import { Button, Input } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import TenantTable from "./TenantTable";
 
 function Dashboard() {
   const router = useRouter();
@@ -68,56 +69,8 @@ function Dashboard() {
   });
 
   return (
-    <>
-      <div className="p-5 flex gap-5 items-center">
-        <Input
-          isRequired={true}
-          label={"Tenancy Name"}
-          type={"text"}
-          variant={"flat"}
-          size={"sm"}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              handleTenancyCheck();
-            }
-          }}
-          onChange={(e) => setInputValue(e.target.value)}
-          classNames={{
-            inputWrapper:
-              "bg-background data-[hover=true]:bg-background group-data-[focus=true]:bg-background !shadow-lightShadow",
-          }}
-          endContent={
-            !isLoading &&
-            buttonIconRef.current && (
-              <span
-                className={`transition-all duration-300 ease-in-out transform ${animate} ${
-                  buttonIconRef.current === "correct"
-                    ? "text-success"
-                    : "text-danger"
-                }`}
-              >
-                {buttonIconRef.current === "correct" ? (
-                  <TickCircle />
-                ) : (
-                  <CloseCircle />
-                )}
-              </span>
-            )
-          }
-          spellCheck={"false"}
-        />
-        <Button
-          className="min-h-10 w-fit px-10"
-          type="submit"
-          color="primary"
-          variant={"shadow"}
-          size={"md"}
-          isLoading={isLoading}
-          onPress={handleTenancyCheck}
-        >
-          {"Check Tenant"}
-        </Button>
-      </div>
+    <div className="overflow-auto customScrollbar grow w-full flex justify-center">
+      <TenantTable />
       {tenancyData?.tenancyName?.toLowerCase() == inputValue.toLowerCase() && (
         <>
           <hr className="" />
@@ -150,7 +103,7 @@ function Dashboard() {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
 

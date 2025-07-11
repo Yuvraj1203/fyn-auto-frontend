@@ -1,5 +1,5 @@
 "use client";
-import { CloseSidebar, Images, MenuSvg, OpenSidebar } from "@/public";
+import { MenuSvg } from "@/public";
 import React from "react";
 import NotificationBell from "./NotificationBell";
 import ProfileTool from "./ProfileTool";

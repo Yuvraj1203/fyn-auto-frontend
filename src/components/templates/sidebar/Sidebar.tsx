@@ -45,30 +45,30 @@ function Sidebar() {
   //list for side menu
   const sidebarList = [
     {
-      label: "Dashboard",
+      label: "Tenant",
       icon: <Dashboard />,
       href: "/",
     },
-    {
-      label: "Tenant Creation",
-      icon: <EditFull />,
-      href: "/tenant-info",
-    },
-    {
-      label: "File Config",
-      icon: <EditFull />,
-      href: "/file-configs",
-    },
-    {
-      label: "Typography",
-      icon: <Typography />,
-      href: "/typography",
-    },
-    {
-      label: "Color",
-      icon: <Color />,
-      href: "/color-theming",
-    },
+    // {
+    //   label: "Tenant Creation",
+    //   icon: <EditFull />,
+    //   href: "/tenant-info",
+    // },
+    // {
+    //   label: "File Config",
+    //   icon: <EditFull />,
+    //   href: "/file-configs",
+    // },
+    // {
+    //   label: "Typography",
+    //   icon: <Typography />,
+    //   href: "/typography",
+    // },
+    // {
+    //   label: "Color",
+    //   icon: <Color />,
+    //   href: "/color-theming",
+    // },
   ];
 
   const renderSiderbarItem = (item: SidebarListType, index: number) => {
