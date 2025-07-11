@@ -121,9 +121,9 @@ function Dashboard() {
       {tenancyData?.tenancyName?.toLowerCase() == inputValue.toLowerCase() && (
         <>
           <hr className="" />
-          <div className=" flex flex-col grow gap-5 overflow-y-auto customScrollbar relative">
+          <div className=" flex flex-col grow md:gap-5 overflow-y-auto customScrollbar relative">
             <h2 className="p-5 heading4">Tenant Details</h2>
-            <div className="p-5 flex flex-wrap gap-5 justify-between">
+            <div className="px-5 pb-5 md:p-5 flex flex-wrap gap-2 md:gap-5 justify-between">
               {Object.entries(tenancyData).map(([key, value]) => {
                 return (
                   <div className="text-sm" key={key}>

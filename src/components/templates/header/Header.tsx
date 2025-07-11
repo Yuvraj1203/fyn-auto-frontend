@@ -1,22 +1,27 @@
-import { Images } from "@/public";
-import Image from "next/image";
+"use client";
+import { CloseSidebar, Images, MenuSvg, OpenSidebar } from "@/public";
 import React from "react";
 import NotificationBell from "./NotificationBell";
 import ProfileTool from "./ProfileTool";
-import { CustomImage } from "@/components/atoms";
+import { useSidebarStateStore } from "@/store";
 
 function Header() {
+  const sidebarStore = useSidebarStateStore();
+
+  const handleSidebarClick = () => {
+    sidebarStore.setSidebarSate(!sidebarStore.sidebarState);
+  };
+
   return (
-    <header className="py-4 px-5 xl:py-6 xl:px-8 flex items-center justify-between">
-      <div className="pl-4">
-        <CustomImage
-          src={Images.appBanner}
-          width={150}
-          height={27}
-          alt="logo"
-        />
-      </div>
-      <div className="flex gap-8 items-center">
+    <header className="py-4 px-1 xl:py-6 xl:px-8 flex items-center justify-between md:justify-end gap-8">
+      <span
+        data-sidebarexception="true"
+        onClick={handleSidebarClick}
+        className="inline-flex items-center justify-center text-primary cursor-pointer duration-400 md:hidden size-8 "
+      >
+        <MenuSvg />
+      </span>
+      <div className="flex items-center gap-8">
         <NotificationBell />
         <ProfileTool />
       </div>

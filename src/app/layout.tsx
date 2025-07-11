@@ -26,11 +26,13 @@ export default function RootLayout({
         className={`${quicksand.className} flex flex-col bg-background h-screen`}
       >
         <ClientProvider>
-          <Header />
           <main className="flex gap-5 px-5 xl:px-8 ">
             <Sidebar />
-            <div className="flex grow p-5 bg-surface rounded-2xl">
-              {children}
+            <div className="grow">
+              <Header />
+              <div className="flex grow p-5 bg-surface rounded-2xl">
+                {children}
+              </div>
             </div>
           </main>
         </ClientProvider>

@@ -14,6 +14,7 @@ type CustomImageProps = {
   className?: string;
   type?: ImageType;
   color?: string;
+  onClick?: () => void;
 };
 
 const CustomImage = ({
@@ -25,13 +26,17 @@ const CustomImage = ({
   if (type == ImageType.svg) {
     const Icon = props.src;
     return (
-      <span className={`h-[${height}px] w-[${width}px] ${props.color}`}>
+      <span
+        onClick={props.onClick}
+        className={`h-[${height}px] w-[${width}px] ${props.color}`}
+      >
         <Icon />
       </span>
     );
   }
   return (
     <Image
+      onClick={props.onClick}
       src={props.src}
       width={width}
       height={height}

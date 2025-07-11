@@ -63,7 +63,7 @@ const FileDropZone: FC<FileDropZoneProps> = ({ setFiles, extensions }) => {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
-    const droppedFiles = Object.values(files).filter(isValidFile);
+    const droppedFiles = Array.from(files).filter(isValidFile);
     console.log(droppedFiles);
     setFiles((prev) => {
       const newFiles = [...prev, ...droppedFiles];
