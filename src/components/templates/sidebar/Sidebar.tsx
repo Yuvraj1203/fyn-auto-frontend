@@ -5,6 +5,7 @@ import { useSidebarStateStore } from "@/store";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useRef } from "react";
+import ProfileTool from "../header/ProfileTool";
 
 type SidebarListType = {
   label: string;
@@ -49,11 +50,11 @@ function Sidebar() {
       icon: <Dashboard />,
       href: "/",
     },
-    // {
-    //   label: "Tenant Creation",
-    //   icon: <EditFull />,
-    //   href: "/tenant-info",
-    // },
+    {
+      label: "Tenant Creation",
+      icon: <EditFull />,
+      href: "/tenant-creation",
+    },
     // {
     //   label: "File Config",
     //   icon: <EditFull />,
@@ -93,7 +94,7 @@ function Sidebar() {
 
   return (
     <aside
-      className={`max-md:absolute max-md:z-50 h-lvh max-md:px-4 max-md:shadow-fullShadow max-md:bg-background ${
+      className={`flex flex-col max-md:absolute max-md:z-50 h-lvh max-md:px-4 max-md:shadow-fullShadow max-md:bg-background pb-10 ${
         sidebarStore.sidebarState
           ? "max-md:translate-x-[-20px]"
           : "max-md:translate-x-[-120%]"
@@ -109,9 +110,10 @@ function Sidebar() {
           className="my-2.5"
         />
       </div>
-      <nav className="flex flex-col gap-2 ">
+      <nav className="flex flex-col gap-2 mb-4 grow">
         {sidebarList.map((item, index) => renderSiderbarItem(item, index))}
       </nav>
+      <ProfileTool />
     </aside>
   );
 }

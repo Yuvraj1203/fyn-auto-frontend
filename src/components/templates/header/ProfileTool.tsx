@@ -6,7 +6,7 @@ import { CustomImage } from "@/components/atoms";
 
 function ProfileTool() {
   const popoverTrigger = (
-    <div className="group inline-flex gap-4 items-center p-2 pr-3 bg-secondaryContainer hover:bg-secondary rounded-full cursor-pointer duration-400">
+    <div className="group inline-flex gap-3 items-center p-2 pr-3 bg-secondaryContainer hover:bg-secondary rounded-full cursor-pointer duration-400">
       <div className="rounded-full">
         <CustomImage
           src={Images.profile}
@@ -16,8 +16,11 @@ function ProfileTool() {
           className="bg-yellow-400 rounded-full size-8"
         />
       </div>
-      <span className="text-secondary group-hover:text-onSecondary">
+      <span className="text-secondary group-hover:text-onSecondary duration-400">
         <Gear />
+      </span>
+      <span className="text-secondary group-hover:text-onSecondary duration-400">
+        Settings
       </span>
     </div>
   );

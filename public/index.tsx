@@ -10,6 +10,7 @@ export { default as CloseCircle } from "./images/icons/closeCircle.svg";
 export { default as Upload } from "./images/icons/upload.svg";
 export { default as File } from "./images/icons/file.svg";
 export { default as MenuSvg } from "./images/icons/menu.svg";
+export { default as RefreshSvg } from "./images/icons/refresh.svg";
 
 export const Images = {
   appBanner: "/images/logo/appBanner.png",

@@ -1,10 +1,10 @@
-import { DashHeader, Dashboard } from "@/components/pages";
+import { Dashboard } from "@/components/pages";
 import { Parent } from "@/components/templates";
 
 export default function page() {
   return (
     <Parent>
-      <DashHeader />
+      <h2 className="heading2 p-5">Tenant</h2>
       <hr className="" />
       <Dashboard />
     </Parent>

@@ -4,8 +4,11 @@ import React from "react";
 import NotificationBell from "./NotificationBell";
 import ProfileTool from "./ProfileTool";
 import { useSidebarStateStore } from "@/store";
+import { Timeline } from "@/components/common";
+import { usePathname } from "next/navigation";
 
 function Header() {
+  const pathname = usePathname();
   const sidebarStore = useSidebarStateStore();
 
   const handleSidebarClick = () => {
@@ -21,9 +24,10 @@ function Header() {
       >
         <MenuSvg />
       </span>
+      {pathname.includes("tenant-creation") && <Timeline />}
       <div className="flex items-center gap-8">
         <NotificationBell />
-        <ProfileTool />
+        {/* <ProfileTool /> */}
       </div>
     </header>
   );

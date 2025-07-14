@@ -36,7 +36,7 @@ const CustomModal = ({
         onOpenChange={onOpenChange}
         classNames={{
           closeButton:
-            "right-1 -top-10 md:-right-4 md:-top-4 bg-background shadow-fullShadow",
+            "right-3 -top-10 md:-right-4 md:-top-4 bg-background shadow-fullShadow",
           base: "overflow-visible max-md:rounded-b-none max-md:m-0",
         }}
       >
