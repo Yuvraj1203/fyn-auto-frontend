@@ -40,7 +40,9 @@ export async function makeRequest<T>({
         "Content-Type": isForm ? "multipart/form-data" : "application/json",
         Accept: "application/json",
       },
-      ...(method === HttpMethodApi.Get ? { params: data } : { data }),
+      ...(method === HttpMethodApi.Get || method === HttpMethodApi.Delete
+        ? { params: data }
+        : { data }),
     });
 
     if (withoutBaseModel) {

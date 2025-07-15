@@ -29,6 +29,7 @@ import { useCurrentTenantInfoStore } from "@/store";
 type TenantTableProps = {
   allTenants: GetTenantIdByNameModel[];
   getAllTenants: () => void;
+  handleDeleteTenant: (value: string) => void;
 };
 
 type User = {
@@ -193,7 +194,11 @@ const INITIAL_VISIBLE_COLUMNS = [
   "actions",
 ];
 
-const TenantTable = ({ allTenants, getAllTenants }: TenantTableProps) => {
+const TenantTable = ({
+  allTenants,
+  getAllTenants,
+  handleDeleteTenant,
+}: TenantTableProps) => {
   const currentTenantInfo = useCurrentTenantInfoStore();
   const router = useRouter();
   const [filterValue, setFilterValue] = React.useState("");
@@ -329,7 +334,12 @@ const TenantTable = ({ allTenants, getAllTenants }: TenantTableProps) => {
                   <DropdownItem onClick={() => handleProceed(user)} key="view">
                     Proceed
                   </DropdownItem>
-                  {/* <DropdownItem onClick={} key="delete">Delete</DropdownItem> */}
+                  <DropdownItem
+                    onClick={() => handleDeleteTenant(user.tenantId!)}
+                    key="delete"
+                  >
+                    Delete
+                  </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>
