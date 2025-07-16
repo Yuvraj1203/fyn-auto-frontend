@@ -8,7 +8,9 @@ import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { ApiConstants } from "@/services/apiConstants";
-import { showSnackbar } from "@/utils/utils";
+import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
+import { useCurrentTenantInfoStore } from "@/store";
+import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
 
 const FileConfigMain = () => {
   const [loading, setLoading] = useState(false);
@@ -74,21 +76,48 @@ const FileConfigMain = () => {
     }
   };
 
+  const handleProceed = () => {
+    const stepsData = proceedStepsStatus(
+      useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
+      useCurrentTenantInfoStore.getState()?.currentStep - 1
+    );
+    UpdateTenantStepApi.mutate({
+      params: {
+        tenantId:
+          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
+        step: stepsData.step,
+      },
+      data: stepsData.steps,
+    });
+  };
+
   const handleSubmit = () => {
     const formData = new FormData();
     files.forEach((file) => {
       formData.append("files", file);
     });
 
-    FileConfigsUploadApi.mutate(formData);
+    FileConfigsUploadApi.mutate({
+      params: {
+        tenantId:
+          useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId,
+        tenancyName:
+          useCurrentTenantInfoStore.getState().currentTenantInfo.tenancyName,
+      },
+      data: formData,
+    });
   };
 
   const FileConfigsUploadApi = useMutation({
-    mutationFn: (sendData: Record<string, any>) => {
-      return makeRequest<string>({
+    mutationFn: (sendData: {
+      params: Record<string, any>;
+      data: Record<string, any>;
+    }) => {
+      return makeRequest<SetTenantInfoModel>({
         endpoint: ApiConstants.FileConfigsUpload,
         method: HttpMethodApi.Post,
-        data: sendData,
+        params: sendData.params,
+        data: sendData.data,
       });
     },
     onMutate(variables) {
@@ -99,7 +128,40 @@ const FileConfigMain = () => {
     },
     onSuccess(data, variables, context) {
       if (data.result) {
-        showSnackbar(data.result, "danger");
+        showSnackbar(data.result.message, "success");
+        handleProceed();
+      }
+    },
+    onError(error, variables, context) {
+      showSnackbar(error.message, "danger");
+    },
+  });
+
+  //update tenant steps
+  const UpdateTenantStepApi = useMutation({
+    mutationFn: (sendData: {
+      params: Record<string, any>;
+      data: Record<string, any>;
+    }) => {
+      return makeRequest<GetTenantIdByNameModel>({
+        endpoint: ApiConstants.UpdateTenantStep,
+        method: HttpMethodApi.Patch,
+        params: sendData.params,
+        data: sendData.data,
+      });
+    },
+    onMutate(variables) {
+      setLoading(true);
+    },
+    onSettled(data, error, variables, context) {
+      setLoading(false);
+    },
+    onSuccess(data, variables, context) {
+      if (data.result) {
+        useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
+        useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
+        console.log(data.result);
+        // showSnackbar(data.result, "success");
       }
     },
     onError(error, variables, context) {

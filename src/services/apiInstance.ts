@@ -44,7 +44,7 @@ export async function makeRequest<T>({
       },
       ...(method === HttpMethodApi.Get || method === HttpMethodApi.Delete
         ? { params: data }
-        : method === HttpMethodApi.Patch || method === HttpMethodApi.Put
+        : params
         ? { params, data }
         : { data }),
     });
