@@ -14,6 +14,7 @@ export { default as RefreshSvg } from "./images/icons/refresh.svg";
 
 export const Images = {
   appBanner: "/images/logo/appBanner.png",
+  appIcon: "/images/logo/appIcon.png",
   profile: "/images/pictures/profile.png",
   foldericon: "/images/pictures/foldericon.png",
 };

@@ -4,13 +4,24 @@ import {
   TenantStatusEnum,
 } from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
 import { useCurrentTenantInfoStore } from "@/store";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Timeline = () => {
-  const timelineData = useCurrentTenantInfoStore.getState().currentTenantInfo;
-  const [currentStep, setCurrentStep] = useState(
-    useCurrentTenantInfoStore.getState().currentStep
+  const currentStepFromStore = useCurrentTenantInfoStore(
+    (state) => state.currentStep
   );
+  const timelineDataFromStore = useCurrentTenantInfoStore(
+    (state) => state.currentTenantInfo
+  );
+  const [currentStep, setCurrentStep] = useState(currentStepFromStore);
+  const [timelineData, setTimelineData] = useState(timelineDataFromStore);
+
+  useEffect(() => {
+    setCurrentStep(currentStepFromStore);
+  }, [currentStepFromStore]);
+  useEffect(() => {
+    setTimelineData(timelineDataFromStore);
+  }, [timelineDataFromStore]);
 
   const handleStepsClick = (id: number) => {
     if (id > 0) {
@@ -18,7 +29,8 @@ const Timeline = () => {
       setCurrentStep(id);
     }
   };
-  // [
+
+  // const array = [
   //   {
   //     id: 1,
   //     label: "Tenant Info",
@@ -45,6 +57,7 @@ const Timeline = () => {
   //     status: TenantStatusEnum.pending,
   //   },
   // ];
+
   return (
     <div className="flex items-center grow gap-2 md:gap-4 duration-400">
       {timelineData?.steps?.map((item, index) => {
@@ -70,7 +83,13 @@ const Timeline = () => {
                 </span>
               )}
               {item.id == currentStep && (
-                <span className="text-secondary heading4 duration-400">
+                <span
+                  className={`${
+                    item.status == TenantStatusEnum.completed
+                      ? "text-success"
+                      : "text-secondary"
+                  } text-secondary heading4 duration-400`}
+                >
                   {item.label}
                 </span>
               )}

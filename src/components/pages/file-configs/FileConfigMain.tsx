@@ -4,7 +4,7 @@ import { FileDropZone } from "@/components/templates";
 import { ImageType } from "@/components/atoms/customImage/CustomImage";
 import { Chat, CloseCircle, File, Images, TickCircle } from "@/public";
 import { Button } from "@heroui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { ApiConstants } from "@/services/apiConstants";
@@ -21,6 +21,49 @@ const FileConfigMain = () => {
           file.name !== fileToRemove.name || file.size !== fileToRemove.size
       )
     );
+  };
+
+  const mergeValidFiles = (prev: File[], incoming: File[]): File[] => {
+    const updatedMap = new Map<string, File>();
+
+    // Add existing files to map
+    prev.forEach((file) => {
+      updatedMap.set(file.name, file);
+    });
+
+    incoming.forEach((file) => {
+      const lowerName = file.name.toLowerCase();
+
+      const isGoogleJson = lowerName === "google-services.json";
+      const isPlist = file.name === "GoogleService-Info.plist";
+      const isExtraJson =
+        lowerName.endsWith(".json") && lowerName !== "google-services.json";
+
+      // Only allow specific files
+      if (isGoogleJson || isPlist || isExtraJson) {
+        updatedMap.set(file.name, file); // replace if exists
+      }
+    });
+
+    // Validate only 1 plist and max 2 jsons (1 named + 1 arbitrary .json)
+    const finalFiles: File[] = [];
+    let extraJsonAdded = false;
+
+    for (const file of updatedMap.values()) {
+      const name = file.name;
+      const isGoogleJson = name.toLowerCase() === "google-services.json";
+      const isPlist = name === "GoogleService-Info.plist";
+      const isExtraJson = name.toLowerCase().endsWith(".json") && !isGoogleJson;
+
+      if (isGoogleJson) finalFiles.push(file);
+      else if (isPlist) finalFiles.push(file);
+      else if (isExtraJson && !extraJsonAdded) {
+        finalFiles.push(file);
+        extraJsonAdded = true;
+      }
+    }
+
+    return finalFiles;
   };
 
   const imagePreviewer = (file: File) => {
@@ -67,7 +110,12 @@ const FileConfigMain = () => {
   return (
     <>
       <div className="grow overflow-auto customScrollbar">
-        <FileDropZone setFiles={setFiles} extensions={[".json", ".plist"]} />
+        <FileDropZone
+          setFiles={setFiles}
+          extensions={[".json", ".plist"]}
+          fileUploadFunction={mergeValidFiles}
+          hasCustomFunction={true}
+        />
         {files.length > 0 && (
           <div className="flex flex-col p-5 gap-4">
             {files.map((file, index) => {

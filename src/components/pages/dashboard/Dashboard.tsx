@@ -40,7 +40,6 @@ function Dashboard() {
     onSuccess(data, variables, context) {
       if (data.result) {
         setAllTenants(data.result);
-        console.log(data.result);
       }
     },
     onError(error, variables, context) {

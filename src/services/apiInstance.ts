@@ -12,6 +12,7 @@ export enum HttpMethodApi {
 export type RequestOptions = {
   endpoint: string;
   method: HttpMethodApi;
+  params?: Record<string, any>;
   data?: Record<string, any> | FormData;
   headers?: Record<string, string>;
   withoutBaseModel?: boolean;
@@ -26,6 +27,7 @@ export async function makeRequest<T>({
   endpoint,
   method,
   data,
+  params,
   headers = {},
   withoutBaseModel = false,
 }: RequestOptions): Promise<BaseModel<T>> {
@@ -42,6 +44,8 @@ export async function makeRequest<T>({
       },
       ...(method === HttpMethodApi.Get || method === HttpMethodApi.Delete
         ? { params: data }
+        : method === HttpMethodApi.Patch || method === HttpMethodApi.Put
+        ? { params, data }
         : { data }),
     });
 

@@ -1,3 +1,4 @@
+import { TenantStatusEnum } from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
 import { addToast } from "@heroui/react";
 
 type SnackbarEnum =
@@ -9,6 +10,53 @@ type SnackbarEnum =
   | "warning"
   | "danger"
   | undefined;
+
+type Step = {
+  id: number;
+  label: string;
+  status: TenantStatusEnum;
+};
+
+type UpdateStepsStatusReturn = {
+  message: string;
+  steps: Step[];
+  step: number;
+};
+
+export const proceedStepsStatus = (
+  steps: Step[],
+  step: number
+): UpdateStepsStatusReturn => {
+  const updatedSteps = [...steps];
+
+  // Mark current ongoing step as completed
+  updatedSteps[step].status = TenantStatusEnum.completed;
+
+  // Look for the next pending step *after* the current one
+  let nextPendingIndex = updatedSteps.findIndex(
+    (s, index) => index > step && s.status === TenantStatusEnum.pending
+  );
+
+  // If not found, cycle to first pending step
+  if (nextPendingIndex === -1) {
+    nextPendingIndex = updatedSteps.findIndex(
+      (s) => s.status === TenantStatusEnum.pending
+    );
+  }
+
+  if (nextPendingIndex === -1) {
+    return { message: "All steps completed", steps: updatedSteps, step: 5 };
+  }
+
+  // Set next pending step to ongoing
+  updatedSteps[nextPendingIndex].status = TenantStatusEnum.ongoing;
+
+  return {
+    message: "updation successful",
+    steps: updatedSteps,
+    step: nextPendingIndex + 1,
+  };
+};
 
 export const showSnackbar = (
   msg: string,

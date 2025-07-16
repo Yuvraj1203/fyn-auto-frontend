@@ -17,9 +17,16 @@ import React, {
 type FileDropZoneProps = {
   setFiles: Dispatch<SetStateAction<File[]>>;
   extensions?: string[];
+  hasCustomFunction?: boolean;
+  fileUploadFunction?: (prev: File[], incoming: File[]) => File[];
 };
 
-const FileDropZone: FC<FileDropZoneProps> = ({ setFiles, extensions }) => {
+const FileDropZone: FC<FileDropZoneProps> = ({
+  setFiles,
+  extensions,
+  hasCustomFunction = false,
+  fileUploadFunction,
+}) => {
   // const [files, setFiles] = useState<File[]>([]);
   const [dropZoneActive, setDropZoneActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -42,6 +49,24 @@ const FileDropZone: FC<FileDropZoneProps> = ({ setFiles, extensions }) => {
     return isValid;
   };
 
+  const removeDuplicacy = (prev: File[], droppedFiles: File[]): File[] => {
+    const newFiles = [...prev, ...droppedFiles];
+    const uniqueFiles = Array.from(
+      new Map(
+        newFiles.map((file) => [`${file.name}-${file.size}`, file])
+      ).values()
+    );
+    return uniqueFiles;
+  };
+
+  const uploadFilesFunction = (prev: File[], incoming: File[]): File[] => {
+    if (hasCustomFunction && fileUploadFunction) {
+      return fileUploadFunction(prev, incoming);
+    } else {
+      return removeDuplicacy(prev, incoming);
+    }
+  };
+
   const handleDrop = useCallback((event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDropZoneActive(false);
@@ -49,15 +74,7 @@ const FileDropZone: FC<FileDropZoneProps> = ({ setFiles, extensions }) => {
       isValidFile
     );
     console.log(droppedFiles);
-    setFiles((prev) => {
-      const newFiles = [...prev, ...droppedFiles];
-      const uniqueFiles = Array.from(
-        new Map(
-          newFiles.map((file) => [`${file.name}-${file.size}`, file])
-        ).values()
-      );
-      return uniqueFiles;
-    });
+    setFiles((prev) => uploadFilesFunction(prev, droppedFiles));
   }, []);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -65,15 +82,7 @@ const FileDropZone: FC<FileDropZoneProps> = ({ setFiles, extensions }) => {
     if (!files) return;
     const droppedFiles = Array.from(files).filter(isValidFile);
     console.log(droppedFiles);
-    setFiles((prev) => {
-      const newFiles = [...prev, ...droppedFiles];
-      const uniqueFiles = Array.from(
-        new Map(
-          newFiles.map((file) => [`${file.name}-${file.size}`, file])
-        ).values()
-      );
-      return uniqueFiles;
-    });
+    setFiles((prev) => uploadFilesFunction(prev, droppedFiles));
     event.target.value = "";
   };
 

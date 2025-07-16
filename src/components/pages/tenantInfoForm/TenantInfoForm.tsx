@@ -12,8 +12,8 @@ import { useMutation } from "@tanstack/react-query";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { ApiConstants } from "@/services/apiConstants";
 import { json } from "stream/consumers";
-import { SetTenantInfoModel } from "@/services/models";
-import { showSnackbar } from "@/utils/utils";
+import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
+import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
 import useCurrentTenantInfoStore from "@/store/currentTenantInfo/currentTenantInfo";
 
 type SelectedEnvironmentType = {
@@ -99,6 +99,21 @@ const TenantInfoForm = () => {
     SetTenantInfoApi.mutate(data);
   };
 
+  const handleProceed = () => {
+    const stepsData = proceedStepsStatus(
+      useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
+      useCurrentTenantInfoStore.getState()?.currentStep - 1
+    );
+    UpdateTenantStepApi.mutate({
+      params: {
+        tenantId:
+          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
+        step: stepsData.step,
+      },
+      data: stepsData.steps,
+    });
+  };
+
   //set tenant info api
   const SetTenantInfoApi = useMutation({
     mutationFn: (sendData: Record<string, any>) => {
@@ -117,6 +132,39 @@ const TenantInfoForm = () => {
     onSuccess(data, variables, context) {
       if (data.result) {
         showSnackbar(data.result.message, "success");
+        handleProceed();
+      }
+    },
+    onError(error, variables, context) {
+      showSnackbar(error.message, "danger");
+    },
+  });
+
+  //update tenant steps
+  const UpdateTenantStepApi = useMutation({
+    mutationFn: (sendData: {
+      params: Record<string, any>;
+      data: Record<string, any>;
+    }) => {
+      return makeRequest<GetTenantIdByNameModel>({
+        endpoint: ApiConstants.UpdateTenantStep,
+        method: HttpMethodApi.Patch,
+        params: sendData.params,
+        data: sendData.data,
+      });
+    },
+    onMutate(variables) {
+      setLoading(true);
+    },
+    onSettled(data, error, variables, context) {
+      setLoading(false);
+    },
+    onSuccess(data, variables, context) {
+      if (data.result) {
+        useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
+        useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
+        console.log(data.result);
+        // showSnackbar(data.result, "success");
       }
     },
     onError(error, variables, context) {
