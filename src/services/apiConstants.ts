@@ -3,6 +3,7 @@ export const ApiConstants = {
   SetTenantInfo: "api/v1/tenantInfo/setTenantInfo",
   AddTenant: "api/v1/tenantInfo/addTenant",
   UpdateTenantStep: "api/v1/tenantInfo/updateTenantStep",
+  createFonts: "/api/v1/fontsUpload/createFonts",
   GetAllTenants: "api/v1/tenantInfo/getAllTenants",
   RemoveTenant: "api/v1/tenantInfo/removeTenant",
   GetTenantIdByName: "api/v1/tenantInfo/getTenantIdByName",

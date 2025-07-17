@@ -1,3 +1,4 @@
+import { Timeline } from "@/components/common";
 import { TenantInfoForm, TenantSteps } from "@/components/pages";
 import Dashboard from "@/components/pages/dashboard/Dashboard";
 import { Parent } from "@/components/templates";

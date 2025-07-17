@@ -1,3 +1,4 @@
+"use client";
 import { TickCircle } from "@/public";
 import {
   StepModel,
@@ -59,7 +60,7 @@ const Timeline = () => {
   // ];
 
   return (
-    <div className="flex items-center grow gap-2 md:gap-4 duration-400">
+    <div className="flex items-center px-2 py-0.5 w-[50vw] grow gap-2 md:gap-4 duration-400 scrollbar-hide overflow-x-auto">
       {timelineData?.steps?.map((item, index) => {
         return (
           <>
@@ -82,21 +83,23 @@ const Timeline = () => {
                   {item.id}
                 </span>
               )}
-              {item.id == currentStep && (
+              {
                 <span
                   className={`${
                     item.status == TenantStatusEnum.completed
                       ? "text-success"
-                      : "text-secondary"
-                  } text-secondary heading4 duration-400`}
+                      : item.id == currentStep
+                      ? "text-secondary"
+                      : "text-outline"
+                  } heading4 duration-400 text-nowrap`}
                 >
                   {item.label}
                 </span>
-              )}
+              }
             </div>
             {index < timelineData.steps?.length! - 1 && (
               <span
-                className={`grow h-1 rounded-full max-md:hidden duration-400 ${
+                className={`grow h-0.5 min-w-8 rounded-full max-md:hidden duration-400 ${
                   item.status == TenantStatusEnum.completed
                     ? " bg-success "
                     : "bg-surface"

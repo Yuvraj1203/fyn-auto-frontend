@@ -13,8 +13,18 @@ import { useCurrentTenantInfoStore } from "@/store";
 import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
 
 const FileConfigMain = () => {
+  const currentStepFromStore = useCurrentTenantInfoStore(
+    (state) => state.currentStep
+  );
+  const [currentStep, setCurrentStep] = useState(currentStepFromStore);
+
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    setFiles([]);
+    setCurrentStep(currentStepFromStore);
+  }, [currentStepFromStore]);
 
   const handleRemoveFile = (fileToRemove: File) => {
     setFiles((prev) =>
@@ -23,6 +33,31 @@ const FileConfigMain = () => {
           file.name !== fileToRemove.name || file.size !== fileToRemove.size
       )
     );
+  };
+
+  const mergeValidTTFFiles = (
+    prev: File[],
+    incoming: File[],
+    maxCount = 3
+  ): File[] => {
+    const updatedMap = new Map<string, File>();
+
+    // Add existing files
+    prev.forEach((file) => {
+      if (file.name.toLowerCase().endsWith(".ttf")) {
+        updatedMap.set(file.name, file);
+      }
+    });
+
+    // Add/replace with incoming files
+    incoming.forEach((file) => {
+      if (file.name.toLowerCase().endsWith(".ttf")) {
+        updatedMap.set(file.name, file); // Replace if same name
+      }
+    });
+
+    // Limit to maxCount files
+    return Array.from(updatedMap.values()).slice(0, maxCount);
   };
 
   const mergeValidFiles = (prev: File[], incoming: File[]): File[] => {
@@ -81,14 +116,18 @@ const FileConfigMain = () => {
       useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
       useCurrentTenantInfoStore.getState()?.currentStep - 1
     );
-    UpdateTenantStepApi.mutate({
-      params: {
-        tenantId:
-          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
-        step: stepsData.step,
-      },
-      data: stepsData.steps,
-    });
+    if (currentStep == 2) {
+      UpdateTenantStepApi.mutate({
+        params: {
+          tenantId:
+            useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
+          step: stepsData.step,
+        },
+        data: stepsData.steps,
+      });
+    } else if (currentStep == 4) {
+      //for font files
+    }
   };
 
   const handleSubmit = () => {
@@ -97,7 +136,7 @@ const FileConfigMain = () => {
       formData.append("files", file);
     });
 
-    FileConfigsUploadApi.mutate({
+    const reqBody = {
       params: {
         tenantId:
           useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId,
@@ -105,7 +144,14 @@ const FileConfigMain = () => {
           useCurrentTenantInfoStore.getState().currentTenantInfo.tenancyName,
       },
       data: formData,
-    });
+    };
+
+    if (currentStep == 2) {
+      FileConfigsUploadApi.mutate(reqBody);
+    } else if (currentStep == 4) {
+      //font files
+      CreateFontsApi.mutate(reqBody);
+    }
   };
 
   const FileConfigsUploadApi = useMutation({
@@ -115,6 +161,36 @@ const FileConfigMain = () => {
     }) => {
       return makeRequest<SetTenantInfoModel>({
         endpoint: ApiConstants.FileConfigsUpload,
+        method: HttpMethodApi.Post,
+        params: sendData.params,
+        data: sendData.data,
+      });
+    },
+    onMutate(variables) {
+      setLoading(true);
+    },
+    onSettled(data, error, variables, context) {
+      setLoading(false);
+    },
+    onSuccess(data, variables, context) {
+      if (data.result) {
+        showSnackbar(data.result.message, "success");
+        handleProceed();
+      }
+    },
+    onError(error, variables, context) {
+      showSnackbar(error.message, "danger");
+    },
+  });
+
+  //upload fonts
+  const CreateFontsApi = useMutation({
+    mutationFn: (sendData: {
+      params: Record<string, any>;
+      data: Record<string, any>;
+    }) => {
+      return makeRequest<SetTenantInfoModel>({
+        endpoint: ApiConstants.createFonts,
         method: HttpMethodApi.Post,
         params: sendData.params,
         data: sendData.data,
@@ -160,8 +236,6 @@ const FileConfigMain = () => {
       if (data.result) {
         useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
         useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
-        console.log(data.result);
-        // showSnackbar(data.result, "success");
       }
     },
     onError(error, variables, context) {
@@ -174,8 +248,10 @@ const FileConfigMain = () => {
       <div className="grow overflow-auto customScrollbar">
         <FileDropZone
           setFiles={setFiles}
-          extensions={[".json", ".plist"]}
-          fileUploadFunction={mergeValidFiles}
+          extensions={currentStep == 2 ? [".json", ".plist"] : [".ttf"]}
+          fileUploadFunction={
+            currentStep == 2 ? mergeValidFiles : mergeValidTTFFiles
+          }
           hasCustomFunction={true}
         />
         {files.length > 0 && (

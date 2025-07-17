@@ -163,8 +163,6 @@ const TenantInfoForm = () => {
       if (data.result) {
         useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
         useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
-        console.log(data.result);
-        // showSnackbar(data.result, "success");
       }
     },
     onError(error, variables, context) {
