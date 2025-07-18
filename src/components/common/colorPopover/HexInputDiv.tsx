@@ -1,7 +1,9 @@
+"use client";
 import { TickCircle } from "@/public";
 import { Input } from "@heroui/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { ColorPopoverProps } from "./SegmentButtons";
+import { showSnackbar } from "@/utils/utils";
 
 const HexInputDiv = ({ colorValue, setColorValue }: ColorPopoverProps) => {
   const [inputValue, setInputValue] = useState(colorValue);
@@ -10,14 +12,22 @@ const HexInputDiv = ({ colorValue, setColorValue }: ColorPopoverProps) => {
     setInputValue(colorValue);
   }, [colorValue]);
 
+  function isValidHex(hex: string): boolean {
+    return /^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(hex.trim());
+  }
+
   const handleColorValue = useCallback(() => {
     const trimmed = inputValue.trim();
     if (
       trimmed.startsWith("#") &&
       trimmed !== colorValue &&
-      trimmed.length > 3
+      trimmed.length > 3 &&
+      trimmed.length < 10 &&
+      isValidHex(trimmed)
     ) {
       setColorValue(trimmed);
+    } else {
+      showSnackbar("Please input valid HEX", "warning");
     }
   }, [inputValue, colorValue, setColorValue]);
 

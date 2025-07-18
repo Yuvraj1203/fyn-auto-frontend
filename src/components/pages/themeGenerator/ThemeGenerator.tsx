@@ -1,16 +1,72 @@
 "use client";
-import { ColorPopover } from "@/components/common";
-import React, { useEffect, useRef, useState } from "react";
+import {
+  ColorPopover,
+  ProceedButton,
+  ThemeModeToggle,
+} from "@/components/common";
+import { ApiConstants } from "@/services/apiConstants";
+import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
+import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
+import { useCurrentTenantInfoStore } from "@/store";
+import {
+  generateColorScheme,
+  getContrastText,
+} from "@/utils/generateColorScheme";
+import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
+import { useMutation } from "@tanstack/react-query";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type ColorBoxProps = {
-  label: ColorKey;
+  label: DisplayColorKey;
   color: string;
-  handleThemeColorsUpdate: (key: ColorKey, value: string) => void;
+  handleThemeColorsUpdate: (key: DisplayColorKey, value: string) => void;
+  isCustomizable?: boolean;
 };
 
-type ColorKey = keyof typeof colors.light;
+export type ColorKey = keyof typeof colors.light;
 
 type MainColorKey = keyof typeof mainColors;
+
+type DisplayColorKey = keyof typeof displayColor.light;
+
+export type ThemeColorSet = {
+  primary: string;
+  onPrimary: string;
+  primaryContainer: string;
+  onPrimaryContainer: string;
+  secondary: string;
+  onSecondary: string;
+  secondaryContainer: string;
+  onSecondaryContainer: string;
+  error: string;
+  onError: string;
+  background: string;
+  surface: string;
+  surfaceVariant: string;
+  onSurface: string;
+  onSurfaceVariant: string;
+  outline: string;
+  outlineVariant: string;
+  inversePrimary: string;
+  inverseSurface: string;
+  inverseOnSurface: string;
+  surfaceTint: string;
+  shadow: string;
+  scrim: string;
+  surfaceContainer: string;
+  surfaceContainerHigh: string;
+  surfaceContainerHighest: string;
+  surfaceContainerLow: string;
+  surfaceContainerLowest: string;
+  surfaceDim: string;
+  surfaceBright: string;
+  backdrop: string;
+};
+
+export type ThemeColors = {
+  light: ThemeColorSet;
+  dark: ThemeColorSet;
+};
 
 const mainColors = {
   primary: "#2196F3",
@@ -20,68 +76,202 @@ const mainColors = {
 
 const colors = {
   light: {
-    primary: "#673AB7",
-    onPrimary: "#ffffff",
-    primaryContainer: "#EDE7F6",
-    onPrimaryContainer: "#5E35B1",
-    secondary: "#2196F3",
-    onSecondary: "#ffffff",
-    secondaryContainer: "#E3F2FD",
-    onSecondaryContainer: "#1E88E5",
-    tertiary: "#006c48",
-    onTertiary: "#fff",
+    primary: "#2196F3",
+    onPrimary: "#FFFFFF",
+    primaryContainer: "#D0E4FF",
+    onPrimaryContainer: "#001E33",
+    secondary: "#673AB7",
+    onSecondary: "#FFFFFF",
+    secondaryContainer: "#E6DEFF",
+    onSecondaryContainer: "#24005A",
+    tertiary: "#006C48",
+    onTertiary: "#FFFFFF",
+    tertiaryContainer: "#A7F2D1",
+    onTertiaryContainer: "#002115",
+    error: "#B71C1C",
+    onError: "#FFFFFF",
+    errorContainer: "#FFB4AB",
+    onErrorContainer: "#410004",
+    background: "#FFFFFF",
+    onBackground: "#1A1A1A",
+    surface: "#FFFFFF",
+    onSurface: "#1A1A1A",
+    surfaceVariant: "#E7E0EC",
+    onSurfaceVariant: "#4E484F",
+    outline: "#80787F",
+    outlineVariant: "#D1CACF",
+    shadow: "#000000",
+    scrim: "#000000",
+    inverseSurface: "#2E2B2E",
+    inverseOnSurface: "#F4EFF2",
+    inversePrimary: "#A6CFFF",
+    elevation: {
+      level0: "#00000000",
+      level1: "#F8F8FC",
+      level2: "#F1F1F9",
+      level3: "#EAEAF6",
+      level4: "#E7E7F4",
+      level5: "#E4E3F2",
+    },
+    surfaceDisabled: "#1A1A1A1F",
+    onSurfaceDisabled: "#1A1A1A61",
+    backdrop: "#33312F66",
+    lightPrimaryContainer: "#85f9c025",
   },
   dark: {
-    primary: "#673AB7",
-    onPrimary: "#ffffff",
-    primaryContainer: "#EDE7F6",
-    onPrimaryContainer: "#5E35B1",
-    secondary: "#2196F3",
-    onSecondary: "#ffffff",
-    secondaryContainer: "#E3F2FD",
-    onSecondaryContainer: "#1E88E5",
+    primary: "#A6CFFF",
+    onPrimary: "#00315C",
+    primaryContainer: "#004C91",
+    onPrimaryContainer: "#D0E4FF",
+    secondary: "#C5B0FF",
+    onSecondary: "#38006A",
+    secondaryContainer: "#4F2688",
+    onSecondaryContainer: "#E6DEFF",
+    tertiary: "#74D4B4",
+    onTertiary: "#003728",
+    tertiaryContainer: "#00513E",
+    onTertiaryContainer: "#A7F2D1",
+    error: "#FFB4AB",
+    onError: "#690003",
+    errorContainer: "#93000A",
+    onErrorContainer: "#FFB4AB",
+    background: "#1A1A1A",
+    onBackground: "#ECE0E4",
+    surface: "#1A1A1A",
+    onSurface: "#ECE0E4",
+    surfaceVariant: "#4E484F",
+    onSurfaceVariant: "#D1CACF",
+    outline: "#A99FA8",
+    outlineVariant: "#4E484F",
+    shadow: "#000000",
+    scrim: "#000000",
+    inverseSurface: "#ECE0E4",
+    inverseOnSurface: "#2E2B2E",
+    inversePrimary: "#2196F3",
+    elevation: {
+      level0: "#00000000",
+      level1: "#2E2B2E",
+      level2: "#363134",
+      level3: "#3E393C",
+      level4: "#413C40",
+      level5: "#474146",
+    },
+    surfaceDisabled: "#ECE0E41F",
+    onSurfaceDisabled: "#ECE0E461",
+    backdrop: "#33312F66",
+    lightPrimaryContainer: "#85f9c025",
   },
 };
 
-const ThemeGenerator = () => {
-  const [themeMainColors, setThemeMainColors] = useState({ ...mainColors });
-  const [themeColors, setThemeColors] = useState({ ...colors });
-
-  const handleThemeMainColorsUpdate = (key: ColorKey, value: string) => {};
-
-  const handleThemeColorsUpdate = (key: ColorKey, value: string) => {
-    const currentThemeColors = { ...themeColors };
-    currentThemeColors.light[key] = value;
-    setThemeColors(currentThemeColors);
-  };
-  return (
-    <>
-      <h2 className="heading3 px-5 pt-3">{"Playground"}</h2>
-      <div className="grid grid-cols-3 gap-4 p-5">
-        {Object.entries(mainColors).map(([key, value]) => (
-          <ColorBox
-            label={key as ColorKey}
-            color={value}
-            handleThemeColorsUpdate={handleThemeMainColorsUpdate}
-          />
-        ))}
-      </div>
-      <h2 className="heading3 mx-5 ">{"Preview"}</h2>
-      <div className="grid grid-cols-3 gap-4 p-5">
-        {Object.entries(colors.light).map(([key, value]) => (
-          <ColorBox
-            label={key as ColorKey}
-            color={value}
-            handleThemeColorsUpdate={handleThemeColorsUpdate}
-          />
-        ))}
-      </div>
-    </>
-  );
+type DisplayColor = {
+  primary: string;
+  onPrimary: string;
+  secondary: string;
+  onSecondary: string;
+  primaryContainer: string;
+  onPrimaryContainer: string;
+  secondaryContainer: string;
+  onSecondaryContainer: string;
+  tertiary: string;
+  onTertiary: string;
+  tertiaryContainer: string;
+  onTertiaryContainer: string;
+  error: string;
+  onError: string;
+  errorContainer: string;
+  onErrorContainer: string;
+  background: string;
+  onBackground: string;
+  surface: string;
+  onSurface: string;
+  surfaceVariant: string;
+  onSurfaceVariant: string;
+  outline: string;
 };
 
-const getPairedColorKey = (key: ColorKey): ColorKey | undefined => {
-  const pairMap: Record<ColorKey, ColorKey> = {
+const requiredColorKeys: (keyof DisplayColor)[] = [
+  "primary",
+  "onPrimary",
+  "secondary",
+  "onSecondary",
+  "primaryContainer",
+  "onPrimaryContainer",
+  "secondaryContainer",
+  "onSecondaryContainer",
+  "tertiary",
+  "onTertiary",
+  "tertiaryContainer",
+  "onTertiaryContainer",
+  "error",
+  "onError",
+  "errorContainer",
+  "onErrorContainer",
+  "background",
+  "onBackground",
+  "surface",
+  "onSurface",
+  "surfaceVariant",
+  "onSurfaceVariant",
+  "outline",
+];
+
+const displayColor = {
+  light: {
+    primary: colors.light.primary,
+    onPrimary: colors.light.onPrimary,
+    primaryContainer: colors.light.primaryContainer,
+    onPrimaryContainer: colors.light.onPrimaryContainer,
+    secondary: colors.light.secondary,
+    onSecondary: colors.light.onSecondary,
+    secondaryContainer: colors.light.secondaryContainer,
+    onSecondaryContainer: colors.light.onSecondaryContainer,
+    tertiary: colors.light.tertiary,
+    onTertiary: colors.light.onTertiary,
+    tertiaryContainer: colors.light.tertiaryContainer,
+    onTertiaryContainer: colors.light.onTertiaryContainer,
+    error: colors.light.error,
+    onError: colors.light.onError,
+    errorContainer: colors.light.errorContainer,
+    onErrorContainer: colors.light.onErrorContainer,
+    background: colors.light.background,
+    onBackground: colors.light.onBackground,
+    surface: colors.light.surface,
+    onSurface: colors.light.onSurface,
+    surfaceVariant: colors.light.surfaceVariant,
+    onSurfaceVariant: colors.light.onSurfaceVariant,
+    outline: colors.light.outline,
+  },
+  dark: {
+    primary: colors.dark.primary,
+    onPrimary: colors.dark.onPrimary,
+    primaryContainer: colors.dark.primaryContainer,
+    onPrimaryContainer: colors.dark.onPrimaryContainer,
+    secondary: colors.dark.secondary,
+    onSecondary: colors.dark.onSecondary,
+    secondaryContainer: colors.dark.secondaryContainer,
+    onSecondaryContainer: colors.dark.onSecondaryContainer,
+    tertiary: colors.dark.tertiary,
+    onTertiary: colors.dark.onTertiary,
+    tertiaryContainer: colors.dark.tertiaryContainer,
+    onTertiaryContainer: colors.dark.onTertiaryContainer,
+    error: colors.dark.error,
+    onError: colors.dark.onError,
+    errorContainer: colors.dark.errorContainer,
+    onErrorContainer: colors.dark.onErrorContainer,
+    background: colors.dark.background,
+    onBackground: colors.dark.onBackground,
+    surface: colors.dark.surface,
+    onSurface: colors.dark.onSurface,
+    surfaceVariant: colors.dark.surfaceVariant,
+    onSurfaceVariant: colors.dark.onSurfaceVariant,
+    outline: colors.dark.outline,
+  },
+};
+
+const getPairedColorKey = (
+  key: DisplayColorKey
+): DisplayColorKey | undefined => {
+  const pairMap: Record<DisplayColorKey, DisplayColorKey> = {
     primary: "onPrimary",
     onPrimary: "primary",
     secondary: "onSecondary",
@@ -92,25 +282,267 @@ const getPairedColorKey = (key: ColorKey): ColorKey | undefined => {
     onSecondaryContainer: "secondaryContainer",
     tertiary: "onTertiary",
     onTertiary: "tertiary",
+    tertiaryContainer: "onTertiaryContainer",
+    onTertiaryContainer: "tertiaryContainer",
+    error: "onError",
+    onError: "error",
+    errorContainer: "onErrorContainer",
+    onErrorContainer: "errorContainer",
+    background: "onBackground",
+    onBackground: "background",
+    surface: "onSurface",
+    onSurface: "surface",
+    surfaceVariant: "onSurfaceVariant",
+    onSurfaceVariant: "surfaceVariant",
+    outline: "background",
   };
 
   return pairMap[key];
 };
 
-const ColorBox = ({ label, color, handleThemeColorsUpdate }: ColorBoxProps) => {
+const ThemeGenerator = () => {
+  const [loading, setLoading] = useState(false);
+  const [themeMainColors, setThemeMainColors] = useState({ ...mainColors });
+  const [themeColors, setThemeColors] = useState({ ...colors });
+  const [themeDisplayColor, setThemeDisplayColor] = useState({
+    ...displayColor,
+  });
+  const debounceColorUpdateRef = useRef(false);
+
+  //display color gets set by colors accordingly as display color doesnt have all the keys
+  const pickColorKeys = (
+    source: Record<string, any>,
+    keys: (keyof DisplayColor)[]
+  ): DisplayColor =>
+    Object.fromEntries(keys.map((key) => [key, source[key]])) as DisplayColor;
+
+  //display colors
+  useEffect(() => {
+    setThemeDisplayColor({
+      light: pickColorKeys(themeColors.light, requiredColorKeys),
+      dark: pickColorKeys(themeColors.dark, requiredColorKeys),
+    });
+  }, [themeColors]);
+
+  //action when playground colors gets changed
+  const handleThemeMainColorsUpdate = (key: ColorKey, value: string) => {
+    if (debounceColorUpdateRef.current) return; //for hex selector
+    if (!value) return; // Optional: guard clause for empty values
+
+    const updatedMainColors = {
+      ...themeMainColors,
+      [key]: value,
+    };
+    setThemeMainColors(updatedMainColors);
+
+    const { light, dark } = generateColorScheme(updatedMainColors);
+
+    // Optional: override on* colors manually
+    light.primary = updatedMainColors.primary;
+    light.secondary = updatedMainColors.secondary;
+    light.tertiary = updatedMainColors.tertiary;
+    light.onPrimary = getContrastText(updatedMainColors.primary);
+    light.onSecondary = getContrastText(updatedMainColors.secondary);
+    light.onTertiary = getContrastText(updatedMainColors.tertiary);
+
+    dark.onPrimary = getContrastText(`${dark.primary}`);
+    dark.onSecondary = getContrastText(`${updatedMainColors.secondary}`);
+    dark.onTertiary = getContrastText(`${updatedMainColors.tertiary}`);
+
+    const FinalColor = {
+      light: {
+        ...light,
+        elevation: {
+          level0: "#00000000",
+          level1: "#F8F8FC",
+          level2: "#F1F1F9",
+          level3: "#EAEAF6",
+          level4: "#E7E7F4",
+          level5: "#E4E3F2",
+        },
+        surfaceDisabled: "#1A1A1A1F",
+        onSurfaceDisabled: "#1A1A1A61",
+        backdrop: "#33312F66",
+        lightPrimaryContainer: "#85f9c025",
+      },
+      dark: {
+        ...dark,
+        elevation: {
+          level0: "#00000000",
+          level1: "#2E2B2E",
+          level2: "#363134",
+          level3: "#3E393C",
+          level4: "#413C40",
+          level5: "#474146",
+        },
+        surfaceDisabled: "#ECE0E41F",
+        onSurfaceDisabled: "#ECE0E461",
+        backdrop: "#33312F66",
+        lightPrimaryContainer: "#85f9c025",
+      },
+    };
+
+    setThemeColors(FinalColor as any);
+    debounceColorUpdateRef.current = true;
+    setTimeout(() => {
+      debounceColorUpdateRef.current = false;
+    }, 400);
+  };
+
+  //action when preview colors gets changed
+  const handleThemeColorsUpdate = (key: DisplayColorKey, value: string) => {
+    if (debounceColorUpdateRef.current) return; //for hex selector
+    const currentThemeColors = { ...themeColors };
+    currentThemeColors.light[key] = value;
+    setThemeColors(currentThemeColors);
+    setTimeout(() => {
+      debounceColorUpdateRef.current = false;
+    }, 400);
+  };
+
+  const handleProceed = () => {
+    const stepsData = proceedStepsStatus(
+      useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
+      useCurrentTenantInfoStore.getState()?.currentStep - 1
+    );
+    UpdateTenantStepApi.mutate({
+      params: {
+        tenantId:
+          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
+        step: stepsData.step,
+      },
+      data: stepsData.steps,
+    });
+  };
+
+  //handle the submission
+  const handleSubmit = () => {
+    console.log(themeColors, "====themecolors");
+    CreateColorsApi.mutate({
+      params: {
+        tenantId:
+          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
+        tenancyName:
+          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenancyName,
+      },
+      data: themeColors,
+    });
+  };
+
+  const CreateColorsApi = useMutation({
+    mutationFn: (sendData: Record<string, any>) => {
+      return makeRequest<SetTenantInfoModel>({
+        endpoint: ApiConstants.CreateColors,
+        method: HttpMethodApi.Post,
+        params: sendData.params,
+        data: sendData.data,
+      });
+    },
+    onMutate(variables) {
+      setLoading(true);
+    },
+    onSettled(data, error, variables, context) {
+      setLoading(false);
+    },
+    onSuccess(data, variables, context) {
+      if (data.result) {
+        showSnackbar(data.result.message, "success");
+        handleProceed();
+      }
+    },
+    onError(error, variables, context) {},
+  });
+
+  //update tenant steps
+  const UpdateTenantStepApi = useMutation({
+    mutationFn: (sendData: {
+      params: Record<string, any>;
+      data: Record<string, any>;
+    }) => {
+      return makeRequest<GetTenantIdByNameModel>({
+        endpoint: ApiConstants.UpdateTenantStep,
+        method: HttpMethodApi.Patch,
+        params: sendData.params,
+        data: sendData.data,
+      });
+    },
+    onMutate(variables) {
+      setLoading(true);
+    },
+    onSettled(data, error, variables, context) {
+      setLoading(false);
+    },
+    onSuccess(data, variables, context) {
+      if (data.result) {
+        useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
+        useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
+      }
+    },
+    onError(error, variables, context) {
+      showSnackbar(error.message, "danger");
+    },
+  });
+
+  return (
+    <>
+      <div className="flex justify-between px-5 pt-3">
+        <h2 className="heading3 ">{"Playground"}</h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5">
+        {Object.entries(themeMainColors).map(([key, value]) => (
+          <ColorBox
+            label={key as DisplayColorKey}
+            color={value}
+            handleThemeColorsUpdate={handleThemeMainColorsUpdate}
+            isCustomizable={true}
+          />
+        ))}
+      </div>
+      <h2 className="heading3 mx-5 ">{"Preview"}</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4  gap-4 p-5 ">
+        {Object.entries(themeDisplayColor.light).map(([key, value]) => (
+          <ColorBox
+            label={key as DisplayColorKey}
+            color={value as DisplayColorKey}
+            handleThemeColorsUpdate={handleThemeColorsUpdate}
+          />
+        ))}
+      </div>
+      <ProceedButton
+        buttonType={"submit"}
+        content={"Proceed"}
+        loading={loading}
+        onClick={handleSubmit}
+      />
+    </>
+  );
+};
+
+const ColorBox = ({
+  label,
+  color,
+  handleThemeColorsUpdate,
+  isCustomizable = false,
+}: ColorBoxProps) => {
   const [colorValue, setColorValue] = useState(color);
-  const textColorKey = getPairedColorKey(label as ColorKey);
+  const textColorKey = getPairedColorKey(label as DisplayColorKey);
   const textColor = textColorKey ? colors.light[textColorKey] : "#000";
 
   useEffect(() => {
     handleThemeColorsUpdate(label, colorValue);
   }, [colorValue]);
 
+  useEffect(() => {
+    setColorValue(color);
+  }, [color]);
+
   const ColorPickerDropDown = () => {
     return (
       <div
         key={label}
-        className="min-w-24 rounded-lg overflow-hidden shadow-lightShadow cursor-pointer"
+        className={`md:min-w-24 rounded-lg overflow-hidden shadow-lightShadow ${
+          isCustomizable ? "cursor-pointer" : "cursor-default"
+        }`}
       >
         <div
           className={`min-w-24 h-14 rounded-b-lg flex justify-center py-2 shadow-sm duration-400`}
@@ -128,11 +560,17 @@ const ColorBox = ({ label, color, handleThemeColorsUpdate }: ColorBoxProps) => {
   };
 
   return (
-    <ColorPopover
-      trigger={ColorPickerDropDown}
-      colorValue={colorValue}
-      setColorValue={setColorValue}
-    />
+    <>
+      {isCustomizable ? (
+        <ColorPopover
+          trigger={ColorPickerDropDown}
+          colorValue={colorValue}
+          setColorValue={setColorValue}
+        />
+      ) : (
+        <ColorPickerDropDown />
+      )}
+    </>
   );
 };
 

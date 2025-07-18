@@ -60,13 +60,13 @@ const Timeline = () => {
   // ];
 
   return (
-    <div className="flex items-center px-2 py-0.5 w-[50vw] grow gap-2 md:gap-4 duration-400 scrollbar-hide overflow-x-auto">
+    <div className="flex items-center bg-background px-2 py-0.5 w-[50vw] rounded-2xl grow gap-2 md:gap-4 duration-400 scrollbar-hide overflow-x-auto">
       {timelineData?.steps?.map((item, index) => {
         return (
           <>
             <div
               onClick={() => handleStepsClick(item.id)}
-              className="flex justify-center items-center gap-1 cursor-pointer duration-400"
+              className="flex justify-center items-center gap-1.5 cursor-pointer duration-400"
             >
               {item.status == TenantStatusEnum.completed ? (
                 <span className="size-5 rounded-full text-xs inline-grid place-content-center font-semibold text-success duration-400">
@@ -91,7 +91,7 @@ const Timeline = () => {
                       : item.id == currentStep
                       ? "text-secondary"
                       : "text-outline"
-                  } heading4 duration-400 text-nowrap`}
+                  } font-semibold text-xs duration-400 text-nowrap`}
                 >
                   {item.label}
                 </span>

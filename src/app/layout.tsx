@@ -33,7 +33,7 @@ export default function RootLayout({
             <Sidebar />
             <div className="grow">
               <Header />
-              <div className="flex grow p-5 bg-surface rounded-2xl">
+              <div className="flex flex-col grow p-5 bg-surface rounded-2xl">
                 {children}
               </div>
             </div>
