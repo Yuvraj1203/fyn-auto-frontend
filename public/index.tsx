@@ -11,6 +11,10 @@ export { default as Upload } from "./images/icons/upload.svg";
 export { default as File } from "./images/icons/file.svg";
 export { default as MenuSvg } from "./images/icons/menu.svg";
 export { default as RefreshSvg } from "./images/icons/refresh.svg";
+export { default as Error } from "./images/icons/error.svg";
+export { default as Gallery } from "./images/icons/gallery.svg";
+export { default as Delete } from "./images/icons/delete.svg";
+export { default as UploadButton } from "./images/icons/uploadButton.svg";
 
 export const Images = {
   appBanner: "/images/logo/appBanner.png",

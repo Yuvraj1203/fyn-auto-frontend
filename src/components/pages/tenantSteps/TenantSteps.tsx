@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import TenantInfoForm from "../tenantInfoForm/TenantInfoForm";
 import FileConfigMain from "../file-configs/FileConfigMain";
 import ThemeGenerator from "../themeGenerator/ThemeGenerator";
+import IconGenerator from "../iconGenerator/IconGenerator";
 
 const TenantSteps = () => {
   const currentStepFromStore = useCurrentTenantInfoStore(
@@ -26,7 +27,7 @@ const TenantSteps = () => {
       ) : currentStep == 4 ? (
         <FileConfigMain />
       ) : (
-        <FileConfigMain />
+        <IconGenerator />
       )}
     </>
   );

@@ -13,7 +13,6 @@ type CustomImageProps = {
   alt?: string;
   className?: string;
   type?: ImageType;
-  color?: string;
   onClick?: () => void;
 };
 
@@ -28,7 +27,7 @@ const CustomImage = ({
     return (
       <span
         onClick={props.onClick}
-        className={`h-[${height}px] w-[${width}px] ${props.color}`}
+        className={`h-[${height}px] w-[${width}px] ${props.className}`}
       >
         <Icon />
       </span>

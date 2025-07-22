@@ -45,8 +45,10 @@ const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
   }, [buttonIconRef.current]);
 
   const handleTenancyCheck = () => {
-    setAnimate("scale-0");
-    GetTenantIdByNameApi.mutate({ tenancyName: inputValue });
+    if (inputValue.trim().length > 0) {
+      setAnimate("scale-0");
+      GetTenantIdByNameApi.mutate({ tenancyName: inputValue.trim() });
+    }
   };
 
   const handleTenantAddClick = () => {

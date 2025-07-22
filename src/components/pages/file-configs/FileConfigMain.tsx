@@ -267,8 +267,7 @@ const FileConfigMain = () => {
                     type={imagePreviewer(file).at(1)}
                     width={30}
                     height={30}
-                    className="rounded-md"
-                    color={"text-outline"}
+                    className="rounded-md text-outline"
                   />
                   <div className="flex flex-col grow">
                     <p className="heading5">

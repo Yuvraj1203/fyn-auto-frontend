@@ -33,6 +33,7 @@ const config: Config = {
         onBackground: "#191c1a", //remaining
         surface: "#eef2f6",
         onSurface: "#191c1a", //remaining
+        backgroundContainer: "#f7f7f7",
 
         textColor: "#11181c",
 
