@@ -19,27 +19,27 @@ type DropBoxContainerProps = {
   extensions?: string[];
 };
 
-const IconGenerator = () => {
+const FontsUpload = () => {
   const [loading, setLoading] = useState(false);
-  const [appIconFile, setAppIconFile] = useState<File[]>([]);
-  const [notificationIconFile, setNotificationIconFile] = useState<File[]>([]);
-  const [appBannerFile, setAppBannerFile] = useState<File[]>([]);
+  const [lightFontFile, setLightFontFile] = useState<File[]>([]);
+  const [regularFontFile, setRegularFontFile] = useState<File[]>([]);
+  const [boldFontFile, setBoldFontFile] = useState<File[]>([]);
 
   const handleSubmit = () => {
     const formData = new FormData();
-    if (appIconFile[0]) {
-      formData.append("app_icon", appIconFile[0]); // must match FastAPI param name
+    if (lightFontFile[0]) {
+      formData.append("lightFont", lightFontFile[0]); // must match FastAPI param name
     }
 
-    if (appBannerFile[0]) {
-      formData.append("app_banner", appBannerFile[0]); // must match FastAPI param name
+    if (regularFontFile[0]) {
+      formData.append("regularFont", regularFontFile[0]); // must match FastAPI param name
     }
 
-    if (notificationIconFile[0]) {
-      formData.append("notification_icon", notificationIconFile[0]); // must match FastAPI param name
+    if (boldFontFile[0]) {
+      formData.append("boldFont", boldFontFile[0]); // must match FastAPI param name
     }
 
-    IconGeneratorApi.mutate({
+    FontGeneratorApi.mutate({
       params: {
         tenantId:
           useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId,
@@ -65,14 +65,14 @@ const IconGenerator = () => {
     });
   };
 
-  //icon generator
-  const IconGeneratorApi = useMutation({
+  //font generator
+  const FontGeneratorApi = useMutation({
     mutationFn: (sendData: {
       params: Record<string, any>;
       data: Record<string, any>;
     }) => {
       return makeRequest<SetTenantInfoModel>({
-        endpoint: ApiConstants.iconGenerator,
+        endpoint: ApiConstants.createFonts,
         method: HttpMethodApi.Post,
         params: sendData.params,
         data: sendData.data,
@@ -134,7 +134,7 @@ const IconGenerator = () => {
   }: DropBoxContainerProps) => (
     <>
       <div
-        className={`flex flex-col gap-3 p-3 rounded-2xl max-w-72 shadow-fullShadow`}
+        className={`flex flex-col gap-3 p-3 rounded-2xl w-full shadow-fullShadow`}
       >
         <div className="flex justify-between px-1.5">
           <span className="heading4 text-outline">{title}</span>
@@ -151,29 +151,29 @@ const IconGenerator = () => {
 
   return (
     <>
-      <div className="flex flex-wrap gap-7 justify-around p-5 grow">
+      <div className="flex flex-col gap-5 p-5 grow">
         <DropBoxContainer
-          content={`Upload app icon or you can drag drop the icon here as well`}
-          title={`App Icon`}
-          setFiles={setAppIconFile}
-          files={appIconFile}
+          content={`Upload light weight font file`}
+          title={`Light`}
+          setFiles={setLightFontFile}
+          files={lightFontFile}
         />
         <DropBoxContainer
-          content={`Upload App Banner icon or you can drag drop the icon here as well`}
-          title={`App Banner`}
-          setFiles={setAppBannerFile}
-          files={appBannerFile}
+          content={`Upload regular Font weight font file`}
+          title={`Regular`}
+          setFiles={setRegularFontFile}
+          files={regularFontFile}
         />
         <DropBoxContainer
-          content={`Upload Notification icon (Without background) or you can drag drop the icon here as well`}
-          title={`Notification Icon`}
-          setFiles={setNotificationIconFile}
-          files={notificationIconFile}
+          content={`Upload bold weight font file`}
+          title={`Bold`}
+          setFiles={setBoldFontFile}
+          files={boldFontFile}
         />
       </div>
       <ProceedButton
         buttonType={"submit"}
-        content={"Save Tenant"}
+        content={"Proceed"}
         loading={loading}
         onClick={handleSubmit}
       />
@@ -181,4 +181,4 @@ const IconGenerator = () => {
   );
 };
 
-export default IconGenerator;
+export default FontsUpload;

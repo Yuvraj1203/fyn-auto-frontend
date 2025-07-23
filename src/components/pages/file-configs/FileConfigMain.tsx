@@ -132,6 +132,7 @@ const FileConfigMain = () => {
 
   const handleSubmit = () => {
     const formData = new FormData();
+
     files.forEach((file) => {
       formData.append("files", file);
     });
@@ -246,6 +247,11 @@ const FileConfigMain = () => {
   return (
     <>
       <div className="grow overflow-auto customScrollbar">
+        <p className="text-outline px-5 pt-5">
+          {currentStep == 2
+            ? "Upload the mandatory files (.plist, .json) you want to use in your app."
+            : "Upload the font files (.ttf) you want to use in your app."}
+        </p>
         <FileDropZone
           setFiles={setFiles}
           extensions={currentStep == 2 ? [".json", ".plist"] : [".ttf"]}
@@ -270,9 +276,7 @@ const FileConfigMain = () => {
                     className="rounded-md text-outline"
                   />
                   <div className="flex flex-col grow">
-                    <p className="heading5">
-                      {file.name} ({file.type || "unknown"})
-                    </p>
+                    <p className="heading5">{file.name}</p>
                   </div>
                   <span className="text-success rounded-full hover:bg-success hover:text-onPrimary duration-400 cursor-pointer">
                     <TickCircle />

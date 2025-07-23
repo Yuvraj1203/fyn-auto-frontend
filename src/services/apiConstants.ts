@@ -9,4 +9,5 @@ export const ApiConstants = {
   GetTenantIdByName: "api/v1/tenantInfo/getTenantIdByName",
   FileConfigsUpload: "api/v1/fileConfigs/fileConfigsUpload",
   CreateColors: "/api/v1/colorStep/createColors",
+  iconGenerator: "/api/v1/iconGenerator/iconGenerator",
 };

@@ -5,6 +5,7 @@ import TenantInfoForm from "../tenantInfoForm/TenantInfoForm";
 import FileConfigMain from "../file-configs/FileConfigMain";
 import ThemeGenerator from "../themeGenerator/ThemeGenerator";
 import IconGenerator from "../iconGenerator/IconGenerator";
+import FontsUpload from "../fontsUpload/FontsUpload";
 
 const TenantSteps = () => {
   const currentStepFromStore = useCurrentTenantInfoStore(
@@ -25,7 +26,7 @@ const TenantSteps = () => {
       ) : currentStep == 3 ? (
         <ThemeGenerator />
       ) : currentStep == 4 ? (
-        <FileConfigMain />
+        <FontsUpload />
       ) : (
         <IconGenerator />
       )}

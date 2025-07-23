@@ -1,6 +1,13 @@
 "use client";
 import { CustomImage } from "@/components/atoms";
-import { Delete, Gallery, UploadButton } from "@/public";
+import {
+  CloseCircle,
+  Delete,
+  File,
+  Gallery,
+  Upload,
+  UploadButton,
+} from "@/public";
 import { showSnackbar } from "@/utils/utils";
 import { Button, Image } from "@heroui/react";
 import React, {
@@ -90,7 +97,7 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
   };
 
   return (
-    <>
+    <div className="flex gap-4 items-center">
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -98,26 +105,34 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
         onClick={handleClick}
         className={`${
           dropZoneActive ? "" : ""
-        } flex flex-col gap-3 bg-backgroundContainer grow h-40 items-center justify-center rounded-2xl p-3 text-center cursor-pointer duration-400`}
+        } flex gap-3 bg-backgroundContainer grow items-center justify-center rounded-2xl text-center cursor-pointer duration-400`}
       >
-        {files.length > 0 && files[0] instanceof File ? (
-          <CustomImage
-            width={260}
-            height={160}
-            src={URL.createObjectURL(files[0])}
-            alt="Preview"
-            className="w-full h-full rounded-2xl"
-          />
-        ) : (
+        {files.length > 0 ? (
           <>
+            {files.map((file, index) => {
+              return (
+                <div
+                  key={index}
+                  className="flex w-full items-center justify-start gap-4 rounded-2xl p-2 border-1"
+                >
+                  <File />
+                  <div className="flex flex-col items-start grow">
+                    <p className="heading5">{file.name}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        ) : (
+          <div className="flex items-center justify-center gap-5">
             <span
               className={`${
                 dropZoneActive
                   ? "text-success scale-125"
                   : "text-outline scale-100"
-              } flex items-center justify-center size-10 shadow-lightShadow rounded-2xl duration-400 bg-onPrimary`}
+              } flex items-center justify-center rounded-2xl p-2 duration-400`}
             >
-              <Gallery />
+              <Upload />
             </span>
             <p
               className={`${
@@ -126,9 +141,16 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
                   : "text-outline scale-100"
               } duration-400`}
             >
-              <span>max 5mb</span>
+              <span>{`Drag and drop files here`}</span>
+              <span className="text-onBackground">{` or `}</span>
+              <span className="text-primary font-semibold underline">{`Browse Files`}</span>
+              {extensions && (
+                <>
+                  <span>{`(${extensions})`}</span>
+                </>
+              )}
             </p>
-          </>
+          </div>
         )}
       </div>
       <input
@@ -138,27 +160,15 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
         className="hidden"
         accept={acceptString}
       />
-      <div className="flex justify-between gap-2 mt-2">
-        <Button
-          onClick={handleClick}
-          className="w-full"
-          color="primary"
-          endContent={<UploadButton />}
-        >
-          Upload
-        </Button>
-        <Button
+      {files.length > 0 && (
+        <span
+          className=" text-danger rounded-full hover:bg-danger hover:text-onPrimary duration-400 cursor-pointer "
           onClick={handleRemove}
-          className="w-full"
-          variant="ghost"
-          color="danger"
-          disabled={files.length > 0 && files[0] instanceof File ? false : true}
-          endContent={<Delete />}
         >
-          Remove
-        </Button>
-      </div>
-    </>
+          <CloseCircle />
+        </span>
+      )}
+    </div>
   );
 };
 

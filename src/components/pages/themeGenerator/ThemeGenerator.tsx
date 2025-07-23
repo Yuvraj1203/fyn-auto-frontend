@@ -1,9 +1,5 @@
 "use client";
-import {
-  ColorPopover,
-  ProceedButton,
-  ThemeModeToggle,
-} from "@/components/common";
+import { ColorPopover, ProceedButton } from "@/components/common";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
@@ -69,25 +65,25 @@ export type ThemeColors = {
 };
 
 const mainColors = {
-  primary: "#2196F3",
-  secondary: "#673AB7",
-  tertiary: "#006c48",
+  primary: "#7845AC",
+  secondary: "#665A6F",
+  tertiary: "#805158",
 };
 
 const colors = {
   light: {
-    primary: "#2196F3",
+    primary: "#7845AC",
     onPrimary: "#FFFFFF",
-    primaryContainer: "#D0E4FF",
-    onPrimaryContainer: "#001E33",
-    secondary: "#673AB7",
+    primaryContainer: "#F0DBFF",
+    onPrimaryContainer: "#2C0051",
+    secondary: "#665A6F",
     onSecondary: "#FFFFFF",
-    secondaryContainer: "#E6DEFF",
-    onSecondaryContainer: "#24005A",
-    tertiary: "#006C48",
+    secondaryContainer: "#EDDDF6",
+    onSecondaryContainer: "#21182A",
+    tertiary: "#805158",
     onTertiary: "#FFFFFF",
-    tertiaryContainer: "#A7F2D1",
-    onTertiaryContainer: "#002115",
+    tertiaryContainer: "#FFD9DD",
+    onTertiaryContainer: "#321017",
     error: "#B71C1C",
     onError: "#FFFFFF",
     errorContainer: "#FFB4AB",
@@ -119,18 +115,18 @@ const colors = {
     lightPrimaryContainer: "#85f9c025",
   },
   dark: {
-    primary: "#A6CFFF",
-    onPrimary: "#00315C",
-    primaryContainer: "#004C91",
-    onPrimaryContainer: "#D0E4FF",
-    secondary: "#C5B0FF",
-    onSecondary: "#38006A",
-    secondaryContainer: "#4F2688",
-    onSecondaryContainer: "#E6DEFF",
-    tertiary: "#74D4B4",
-    onTertiary: "#003728",
-    tertiaryContainer: "#00513E",
-    onTertiaryContainer: "#A7F2D1",
+    primary: "#DCB8FF",
+    onPrimary: "#470C7A",
+    primaryContainer: "#5F2B92",
+    onPrimaryContainer: "#F0DBFF",
+    secondary: "#D0C1DA",
+    onSecondary: "#362C3F",
+    secondaryContainer: "#4D4357",
+    onSecondaryContainer: "#EDDDF6",
+    tertiary: "#F3B7BE",
+    onTertiary: "#4B252B",
+    tertiaryContainer: "#653A41",
+    onTertiaryContainer: "#FFD9DD",
     error: "#FFB4AB",
     onError: "#690003",
     errorContainer: "#93000A",
@@ -166,10 +162,10 @@ const colors = {
 type DisplayColor = {
   primary: string;
   onPrimary: string;
-  secondary: string;
-  onSecondary: string;
   primaryContainer: string;
   onPrimaryContainer: string;
+  secondary: string;
+  onSecondary: string;
   secondaryContainer: string;
   onSecondaryContainer: string;
   tertiary: string;
@@ -192,10 +188,10 @@ type DisplayColor = {
 const requiredColorKeys: (keyof DisplayColor)[] = [
   "primary",
   "onPrimary",
-  "secondary",
-  "onSecondary",
   "primaryContainer",
   "onPrimaryContainer",
+  "secondary",
+  "onSecondary",
   "secondaryContainer",
   "onSecondaryContainer",
   "tertiary",
@@ -274,10 +270,10 @@ const getPairedColorKey = (
   const pairMap: Record<DisplayColorKey, DisplayColorKey> = {
     primary: "onPrimary",
     onPrimary: "primary",
-    secondary: "onSecondary",
-    onSecondary: "secondary",
     primaryContainer: "onPrimaryContainer",
     onPrimaryContainer: "primaryContainer",
+    secondary: "onSecondary",
+    onSecondary: "secondary",
     secondaryContainer: "onSecondaryContainer",
     onSecondaryContainer: "secondaryContainer",
     tertiary: "onTertiary",
