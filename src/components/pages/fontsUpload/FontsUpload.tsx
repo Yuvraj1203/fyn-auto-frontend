@@ -1,8 +1,8 @@
 "use client";
 import { Error } from "@/public";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import ImageDropBox from "./ImageDropBox";
-import { Tooltip } from "@heroui/react";
+import FontDropBox from "./ImageDropBox";
+import { Button, Tooltip } from "@heroui/react";
 import { ProceedButton } from "@/components/common";
 import { useMutation } from "@tanstack/react-query";
 import { ApiConstants } from "@/services/apiConstants";
@@ -144,7 +144,7 @@ const FontsUpload = () => {
             </span>
           </Tooltip>
         </div>
-        <ImageDropBox setFiles={setFiles} files={files} />
+        <FontDropBox setFiles={setFiles} files={files} extensions={[".ttf"]} />
       </div>
     </>
   );
@@ -159,7 +159,7 @@ const FontsUpload = () => {
           files={lightFontFile}
         />
         <DropBoxContainer
-          content={`Upload regular Font weight font file`}
+          content={`Upload regular weight font file`}
           title={`Regular`}
           setFiles={setRegularFontFile}
           files={regularFontFile}
@@ -176,6 +176,20 @@ const FontsUpload = () => {
         content={"Proceed"}
         loading={loading}
         onClick={handleSubmit}
+        className="flex gap-5"
+        startContent={
+          <>
+            <Button
+              className="min-h-10 w-full"
+              color="primary"
+              variant={"shadow"}
+              size={"md"}
+              onClick={handleProceed}
+            >
+              {"Default Fonts (QuickSand)"}
+            </Button>
+          </>
+        }
       />
     </>
   );

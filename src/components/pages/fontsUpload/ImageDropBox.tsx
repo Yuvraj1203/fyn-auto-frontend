@@ -27,13 +27,12 @@ type FileDropZoneProps = {
   extensions?: string[];
 };
 
-const ImageDropBox: FC<FileDropZoneProps> = ({
+const FontDropBox: FC<FileDropZoneProps> = ({
   files,
   setFiles,
   extensions,
 }) => {
   const [dropZoneActive, setDropZoneActive] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const acceptString = extensions ? extensions.join(",") : "";
@@ -55,16 +54,15 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
 
   const handleFileAdd = (file: File) => {
     if (!isValidFile(file)) return;
-    setPreview(URL.createObjectURL(file));
     setFiles([file]);
   };
 
   const handleDrop = useCallback((event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDropZoneActive(false);
-    const droppedFiles = Array.from(event.dataTransfer.files);
-    if (droppedFiles.length > 0) {
-      handleFileAdd(droppedFiles[0]);
+    const droppedFile = event.dataTransfer.files?.[0];
+    if (droppedFile && isValidFile(droppedFile)) {
+      handleFileAdd(droppedFile);
     }
   }, []);
 
@@ -92,7 +90,6 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
   };
 
   const handleRemove = () => {
-    setPreview(null);
     setFiles([]);
   };
 
@@ -146,7 +143,7 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
               <span className="text-primary font-semibold underline">{`Browse Files`}</span>
               {extensions && (
                 <>
-                  <span>{`(${extensions})`}</span>
+                  <span>{`  (${extensions})`}</span>
                 </>
               )}
             </p>
@@ -172,4 +169,4 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
   );
 };
 
-export default ImageDropBox;
+export default FontDropBox;

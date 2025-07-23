@@ -16,7 +16,9 @@ function Dashboard() {
   }, []);
 
   const getAllTenants = () => {
-    !GetAllTenantsApi.isPending && GetAllTenantsApi.mutate({});
+    if (!loading) {
+      GetAllTenantsApi.mutate({});
+    }
   };
 
   const handleDeleteTenant = (tenantId: string) => {
