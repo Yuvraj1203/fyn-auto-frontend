@@ -21,8 +21,11 @@ function Dashboard() {
     }
   };
 
-  const handleDeleteTenant = (tenantId: string) => {
-    RemoveTenantApi.mutate({ tenantId: tenantId });
+  const handleDeleteTenant = (user: GetTenantIdByNameModel) => {
+    RemoveTenantApi.mutate({
+      tenantId: user.tenantId,
+      tenancyName: user.tenancyName,
+    });
   };
 
   const GetAllTenantsApi = useMutation({

@@ -29,7 +29,7 @@ import { useCurrentTenantInfoStore } from "@/store";
 type TenantTableProps = {
   allTenants: GetTenantIdByNameModel[];
   getAllTenants: () => void;
-  handleDeleteTenant: (value: string) => void;
+  handleDeleteTenant: (value: GetTenantIdByNameModel) => void;
 };
 
 type User = {
@@ -280,6 +280,8 @@ const TenantTable = ({
 
   const handleProceed = (user: GetTenantIdByNameModel) => {
     currentTenantInfo.setCurrentTenantInfo(user);
+    console.log(user.step, "user.step");
+    currentTenantInfo.setCurrentStep(user.step!);
     router.push("/tenant-creation");
   };
 
@@ -335,7 +337,7 @@ const TenantTable = ({
                     Proceed
                   </DropdownItem>
                   <DropdownItem
-                    onClick={() => handleDeleteTenant(user.tenantId!)}
+                    onClick={() => handleDeleteTenant(user)}
                     key="delete"
                   >
                     Delete

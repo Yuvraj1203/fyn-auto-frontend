@@ -11,6 +11,7 @@ import { ApiConstants } from "@/services/apiConstants";
 import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
 import { useCurrentTenantInfoStore } from "@/store";
 import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
+import { ProceedButton } from "@/components/common";
 
 const FileConfigMain = () => {
   const currentStepFromStore = useCurrentTenantInfoStore(
@@ -131,6 +132,11 @@ const FileConfigMain = () => {
   };
 
   const handleSubmit = () => {
+    if (files.length == 0) {
+      showSnackbar("Please upload files", "warning");
+      return;
+    }
+
     const formData = new FormData();
 
     files.forEach((file) => {
@@ -151,7 +157,6 @@ const FileConfigMain = () => {
       FileConfigsUploadApi.mutate(reqBody);
     } else if (currentStep == 4) {
       //font files
-      CreateFontsApi.mutate(reqBody);
     }
   };
 
@@ -162,36 +167,6 @@ const FileConfigMain = () => {
     }) => {
       return makeRequest<SetTenantInfoModel>({
         endpoint: ApiConstants.FileConfigsUpload,
-        method: HttpMethodApi.Post,
-        params: sendData.params,
-        data: sendData.data,
-      });
-    },
-    onMutate(variables) {
-      setLoading(true);
-    },
-    onSettled(data, error, variables, context) {
-      setLoading(false);
-    },
-    onSuccess(data, variables, context) {
-      if (data.result) {
-        showSnackbar(data.result.message, "success");
-        handleProceed();
-      }
-    },
-    onError(error, variables, context) {
-      showSnackbar(error.message, "danger");
-    },
-  });
-
-  //upload fonts
-  const CreateFontsApi = useMutation({
-    mutationFn: (sendData: {
-      params: Record<string, any>;
-      data: Record<string, any>;
-    }) => {
-      return makeRequest<SetTenantInfoModel>({
-        endpoint: ApiConstants.createFonts,
         method: HttpMethodApi.Post,
         params: sendData.params,
         data: sendData.data,
@@ -293,18 +268,11 @@ const FileConfigMain = () => {
           </div>
         )}
       </div>
-      <div className="bg-background border-t-1 border-surface px-5 py-4 sticky z-10 bottom-0 left-0 right-0 rounded-2xl">
-        <Button
-          className="min-h-10 w-full"
-          color="primary"
-          variant={"shadow"}
-          size={"md"}
-          isLoading={loading}
-          onClick={handleSubmit}
-        >
-          {"Proceed"}
-        </Button>
-      </div>
+      <ProceedButton
+        buttonType={"submit"}
+        loading={loading}
+        onClick={handleSubmit}
+      />
     </>
   );
 };

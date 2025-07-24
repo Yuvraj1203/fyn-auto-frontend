@@ -26,6 +26,14 @@ const IconGenerator = () => {
   const [appBannerFile, setAppBannerFile] = useState<File[]>([]);
 
   const handleSubmit = () => {
+    if (
+      appIconFile.length == 0 ||
+      appBannerFile.length == 0 ||
+      notificationIconFile.length == 0
+    ) {
+      showSnackbar("Please upload icons and images", "warning");
+      return;
+    }
     const formData = new FormData();
     if (appIconFile[0]) {
       formData.append("app_icon", appIconFile[0]); // must match FastAPI param name
@@ -130,7 +138,7 @@ const IconGenerator = () => {
     title,
     files,
     setFiles,
-    extensions,
+    extensions = [".png", ".svg", ".jpeg"],
   }: DropBoxContainerProps) => (
     <>
       <div
@@ -144,7 +152,11 @@ const IconGenerator = () => {
             </span>
           </Tooltip>
         </div>
-        <ImageDropBox setFiles={setFiles} files={files} />
+        <ImageDropBox
+          setFiles={setFiles}
+          files={files}
+          extensions={extensions}
+        />
       </div>
     </>
   );
@@ -173,7 +185,6 @@ const IconGenerator = () => {
       </div>
       <ProceedButton
         buttonType={"submit"}
-        content={"Save Tenant"}
         loading={loading}
         onClick={handleSubmit}
       />

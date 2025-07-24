@@ -32,6 +32,15 @@ export const proceedStepsStatus = (
   // Mark current ongoing step as completed
   updatedSteps[step].status = TenantStatusEnum.completed;
 
+  //change onGoing to pending
+  let anyOngoing = updatedSteps.findIndex(
+    (s, index) => s.status === TenantStatusEnum.ongoing
+  );
+
+  if (anyOngoing > -1) {
+    updatedSteps[anyOngoing].status = TenantStatusEnum.pending;
+  }
+
   // Look for the next pending step *after* the current one
   let nextPendingIndex = updatedSteps.findIndex(
     (s, index) => index > step && s.status === TenantStatusEnum.pending
@@ -51,6 +60,11 @@ export const proceedStepsStatus = (
   // Set next pending step to ongoing
   updatedSteps[nextPendingIndex].status = TenantStatusEnum.ongoing;
 
+  console.log({
+    message: "updation successful",
+    steps: updatedSteps,
+    step: nextPendingIndex + 1,
+  });
   return {
     message: "updation successful",
     steps: updatedSteps,

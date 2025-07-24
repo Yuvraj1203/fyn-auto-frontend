@@ -26,6 +26,14 @@ const FontsUpload = () => {
   const [boldFontFile, setBoldFontFile] = useState<File[]>([]);
 
   const handleSubmit = () => {
+    if (
+      lightFontFile.length == 0 &&
+      regularFontFile.length == 0 &&
+      boldFontFile.length == 0
+    ) {
+      showSnackbar("Please upload files", "warning");
+      return;
+    }
     const formData = new FormData();
     if (lightFontFile[0]) {
       formData.append("lightFont", lightFontFile[0]); // must match FastAPI param name
@@ -173,7 +181,6 @@ const FontsUpload = () => {
       </div>
       <ProceedButton
         buttonType={"submit"}
-        content={"Proceed"}
         loading={loading}
         onClick={handleSubmit}
         className="flex gap-5"

@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 
 const Timeline = () => {
   const currentStepFromStore = useCurrentTenantInfoStore(
-    (state) => state.currentStep
+    (state) => state.currentTenantInfo.step
   );
   const timelineDataFromStore = useCurrentTenantInfoStore(
     (state) => state.currentTenantInfo
@@ -65,6 +65,7 @@ const Timeline = () => {
         return (
           <>
             <div
+              key={`${item.id}-${index}`}
               onClick={() => handleStepsClick(item.id)}
               className="flex justify-center items-center gap-1.5 cursor-pointer duration-400"
             >

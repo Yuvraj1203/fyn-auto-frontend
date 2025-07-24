@@ -14,7 +14,8 @@ import { ApiConstants } from "@/services/apiConstants";
 import { json } from "stream/consumers";
 import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
 import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
-import useCurrentTenantInfoStore from "@/store/currentTenantInfo/currentTenantInfo";
+import useCurrentTenantInfoStore from "@/store/currentTenantInfoStore/currentTenantInfoStore";
+import { ProceedButton } from "@/components/common";
 
 type SelectedEnvironmentType = {
   key: number | string;
@@ -248,18 +249,8 @@ const TenantInfoForm = () => {
             <FormTextInput name="oktaDomain" label="Okta Domain" />
           </div>
         </div>
-        <div className="bg-background border-t-1 border-surface px-5 py-4 sticky z-10 bottom-0 left-0 right-0 rounded-2xl">
-          <Button
-            className="min-h-10 w-full"
-            type="submit"
-            color="primary"
-            variant={"shadow"}
-            size={"md"}
-            isLoading={loading}
-          >
-            {"Proceed"}
-          </Button>
-        </div>
+
+        <ProceedButton buttonType={"submit"} loading={loading} />
       </form>
     </FormProvider>
   );

@@ -506,7 +506,6 @@ const ThemeGenerator = () => {
       </div>
       <ProceedButton
         buttonType={"submit"}
-        content={"Proceed"}
         loading={loading}
         onClick={handleSubmit}
       />
