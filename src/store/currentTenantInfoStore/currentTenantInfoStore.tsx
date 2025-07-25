@@ -3,12 +3,10 @@ import { TenantStatusEnum } from "@/services/models/getTenantIdByNameModel/getTe
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type TenantInfo = GetTenantIdByNameModel;
-
 type CurrentTenantInfoStore = {
-  currentTenantInfo: TenantInfo;
+  currentTenantInfo: GetTenantIdByNameModel;
   currentStep: number;
-  setCurrentTenantInfo: (value: TenantInfo) => void;
+  setCurrentTenantInfo: (value: GetTenantIdByNameModel) => void;
   setCurrentStep: (step: number) => void;
 };
 
