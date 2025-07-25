@@ -63,9 +63,11 @@ const Timeline = () => {
     <div className="flex items-center bg-background px-2 py-0.5 w-[50vw] rounded-2xl grow gap-2 md:gap-4 duration-400 scrollbar-hide overflow-x-auto">
       {timelineData?.steps?.map((item, index) => {
         return (
-          <>
+          <div
+            className="flex items-center grow gap-2 md:gap-4 duration-400 scrollbar-hide"
+            key={`${item.id}-${index}`}
+          >
             <div
-              key={`${item.id}-${index}`}
               onClick={() => handleStepsClick(item.id)}
               className="flex justify-center items-center gap-1.5 cursor-pointer duration-400"
             >
@@ -107,7 +109,7 @@ const Timeline = () => {
                 }`}
               ></span>
             )}
-          </>
+          </div>
         );
       })}
     </div>

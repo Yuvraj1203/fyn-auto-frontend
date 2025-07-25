@@ -110,7 +110,7 @@ const FontDropBox: FC<FileDropZoneProps> = ({
               return (
                 <div
                   key={index}
-                  className="flex w-full items-center justify-start gap-4 rounded-2xl p-2 border-1"
+                  className="flex w-full items-center justify-start gap-2 md:gap-4 rounded-2xl p-2 border-1"
                 >
                   <File />
                   <div className="flex flex-col items-start grow">
@@ -121,7 +121,7 @@ const FontDropBox: FC<FileDropZoneProps> = ({
             })}
           </>
         ) : (
-          <div className="flex items-center justify-center gap-5">
+          <div className="flex items-center justify-center max-md:p-3 gap-2 md:gap-5">
             <span
               className={`${
                 dropZoneActive

@@ -5,17 +5,19 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormTextInput } from "@/components/molecules";
-import { addToast, Button } from "@heroui/react";
 import { FormTextInputType } from "@/components/molecules/customTextInput/FormTextInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { ApiConstants } from "@/services/apiConstants";
-import { json } from "stream/consumers";
-import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
-import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
+import { SetTenantInfoModel } from "@/services/models";
+import { showSnackbar } from "@/utils/utils";
 import useCurrentTenantInfoStore from "@/store/currentTenantInfoStore/currentTenantInfoStore";
 import { ProceedButton } from "@/components/common";
+
+type TenantInfoFormProps = {
+  handleProceed: () => void;
+};
 
 type SelectedEnvironmentType = {
   key: number | string;
@@ -23,7 +25,7 @@ type SelectedEnvironmentType = {
   ApiUrl: string;
 };
 
-const TenantInfoForm = () => {
+const TenantInfoForm = ({ handleProceed }: TenantInfoFormProps) => {
   const currentTenantInfo = useCurrentTenantInfoStore().currentTenantInfo;
   const envDropDown = [
     {
@@ -100,21 +102,6 @@ const TenantInfoForm = () => {
     SetTenantInfoApi.mutate(data);
   };
 
-  const handleProceed = () => {
-    const stepsData = proceedStepsStatus(
-      useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
-      useCurrentTenantInfoStore.getState()?.currentStep - 1
-    );
-    UpdateTenantStepApi.mutate({
-      params: {
-        tenantId:
-          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
-        step: stepsData.step,
-      },
-      data: stepsData.steps,
-    });
-  };
-
   //set tenant info api
   const SetTenantInfoApi = useMutation({
     mutationFn: (sendData: Record<string, any>) => {
@@ -134,36 +121,6 @@ const TenantInfoForm = () => {
       if (data.result) {
         showSnackbar(data.result.message, "success");
         handleProceed();
-      }
-    },
-    onError(error, variables, context) {
-      showSnackbar(error.message, "danger");
-    },
-  });
-
-  //update tenant steps
-  const UpdateTenantStepApi = useMutation({
-    mutationFn: (sendData: {
-      params: Record<string, any>;
-      data: Record<string, any>;
-    }) => {
-      return makeRequest<GetTenantIdByNameModel>({
-        endpoint: ApiConstants.UpdateTenantStep,
-        method: HttpMethodApi.Patch,
-        params: sendData.params,
-        data: sendData.data,
-      });
-    },
-    onMutate(variables) {
-      setLoading(true);
-    },
-    onSettled(data, error, variables, context) {
-      setLoading(false);
-    },
-    onSuccess(data, variables, context) {
-      if (data.result) {
-        useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
-        useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
       }
     },
     onError(error, variables, context) {

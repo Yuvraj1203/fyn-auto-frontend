@@ -7,8 +7,8 @@ import { ProceedButton } from "@/components/common";
 import { useMutation } from "@tanstack/react-query";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
-import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
-import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
+import { showSnackbar } from "@/utils/utils";
+import { SetTenantInfoModel } from "@/services/models";
 import { useCurrentTenantInfoStore } from "@/store";
 
 type DropBoxContainerProps = {
@@ -18,8 +18,11 @@ type DropBoxContainerProps = {
   setFiles: Dispatch<SetStateAction<File[]>>;
   extensions?: string[];
 };
+type IconGeneratorProps = {
+  handleProceed: () => void;
+};
 
-const IconGenerator = () => {
+const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
   const [loading, setLoading] = useState(false);
   const [appIconFile, setAppIconFile] = useState<File[]>([]);
   const [notificationIconFile, setNotificationIconFile] = useState<File[]>([]);
@@ -58,21 +61,6 @@ const IconGenerator = () => {
     });
   };
 
-  const handleProceed = () => {
-    const stepsData = proceedStepsStatus(
-      useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
-      useCurrentTenantInfoStore.getState()?.currentStep - 1
-    );
-    UpdateTenantStepApi.mutate({
-      params: {
-        tenantId:
-          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
-        step: stepsData.step,
-      },
-      data: stepsData.steps,
-    });
-  };
-
   //icon generator
   const IconGeneratorApi = useMutation({
     mutationFn: (sendData: {
@@ -96,36 +84,6 @@ const IconGenerator = () => {
       if (data.result) {
         showSnackbar(data.result.message, "success");
         handleProceed();
-      }
-    },
-    onError(error, variables, context) {
-      showSnackbar(error.message, "danger");
-    },
-  });
-
-  //update tenant steps
-  const UpdateTenantStepApi = useMutation({
-    mutationFn: (sendData: {
-      params: Record<string, any>;
-      data: Record<string, any>;
-    }) => {
-      return makeRequest<GetTenantIdByNameModel>({
-        endpoint: ApiConstants.UpdateTenantStep,
-        method: HttpMethodApi.Patch,
-        params: sendData.params,
-        data: sendData.data,
-      });
-    },
-    onMutate(variables) {
-      setLoading(true);
-    },
-    onSettled(data, error, variables, context) {
-      setLoading(false);
-    },
-    onSuccess(data, variables, context) {
-      if (data.result) {
-        useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
-        useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
       }
     },
     onError(error, variables, context) {

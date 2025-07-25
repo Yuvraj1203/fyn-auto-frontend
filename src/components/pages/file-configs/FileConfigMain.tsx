@@ -2,18 +2,21 @@
 import { CustomImage } from "@/components/atoms";
 import { FileDropZone } from "@/components/templates";
 import { ImageType } from "@/components/atoms/customImage/CustomImage";
-import { Chat, CloseCircle, File, Images, TickCircle } from "@/public";
-import { Button } from "@heroui/react";
+import { CloseCircle, File, TickCircle } from "@/public";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { ApiConstants } from "@/services/apiConstants";
-import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
+import { showSnackbar } from "@/utils/utils";
 import { useCurrentTenantInfoStore } from "@/store";
-import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
+import { SetTenantInfoModel } from "@/services/models";
 import { ProceedButton } from "@/components/common";
 
-const FileConfigMain = () => {
+type FileConfigMainProps = {
+  handleProceed: () => void;
+};
+
+const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
   const currentStepFromStore = useCurrentTenantInfoStore(
     (state) => state.currentStep
   );
@@ -112,25 +115,6 @@ const FileConfigMain = () => {
     }
   };
 
-  const handleProceed = () => {
-    const stepsData = proceedStepsStatus(
-      useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
-      useCurrentTenantInfoStore.getState()?.currentStep - 1
-    );
-    if (currentStep == 2) {
-      UpdateTenantStepApi.mutate({
-        params: {
-          tenantId:
-            useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
-          step: stepsData.step,
-        },
-        data: stepsData.steps,
-      });
-    } else if (currentStep == 4) {
-      //for font files
-    }
-  };
-
   const handleSubmit = () => {
     if (files.length == 0) {
       showSnackbar("Please upload files", "warning");
@@ -182,36 +166,6 @@ const FileConfigMain = () => {
       if (data.result) {
         showSnackbar(data.result.message, "success");
         handleProceed();
-      }
-    },
-    onError(error, variables, context) {
-      showSnackbar(error.message, "danger");
-    },
-  });
-
-  //update tenant steps
-  const UpdateTenantStepApi = useMutation({
-    mutationFn: (sendData: {
-      params: Record<string, any>;
-      data: Record<string, any>;
-    }) => {
-      return makeRequest<GetTenantIdByNameModel>({
-        endpoint: ApiConstants.UpdateTenantStep,
-        method: HttpMethodApi.Patch,
-        params: sendData.params,
-        data: sendData.data,
-      });
-    },
-    onMutate(variables) {
-      setLoading(true);
-    },
-    onSettled(data, error, variables, context) {
-      setLoading(false);
-    },
-    onSuccess(data, variables, context) {
-      if (data.result) {
-        useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
-        useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
       }
     },
     onError(error, variables, context) {

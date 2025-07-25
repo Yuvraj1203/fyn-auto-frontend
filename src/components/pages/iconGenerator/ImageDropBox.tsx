@@ -98,7 +98,7 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
         onClick={handleClick}
         className={`${
           dropZoneActive ? "" : ""
-        } flex flex-col gap-3 bg-backgroundContainer grow h-40 items-center justify-center rounded-2xl p-3 text-center cursor-pointer duration-400`}
+        } flex flex-col gap-3 bg-backgroundContainer grow w-52 md:w-64 h-40 items-center justify-center rounded-2xl p-3 text-center cursor-pointer duration-400`}
       >
         {files.length > 0 && files[0] instanceof File ? (
           <CustomImage
@@ -147,16 +147,17 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
         >
           Upload
         </Button>
-        <Button
-          onClick={handleRemove}
-          className="w-full"
-          variant="ghost"
-          color="danger"
-          disabled={files.length > 0 && files[0] instanceof File ? false : true}
-          endContent={<Delete />}
-        >
-          Remove
-        </Button>
+        {files.length > 0 && files[0] instanceof File && (
+          <Button
+            onClick={handleRemove}
+            className="w-full"
+            variant="ghost"
+            color="danger"
+            endContent={<Delete />}
+          >
+            Remove
+          </Button>
+        )}
       </div>
     </>
   );

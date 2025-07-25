@@ -10,6 +10,7 @@ import {
 } from "@/utils/generateColorScheme";
 import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type ColorBoxProps = {
@@ -296,7 +297,11 @@ const getPairedColorKey = (
   return pairMap[key];
 };
 
-const ThemeGenerator = () => {
+type ThemeGeneratorProps = {
+  handleProceed: () => void;
+};
+
+const ThemeGenerator = ({ handleProceed }: ThemeGeneratorProps) => {
   const [loading, setLoading] = useState(false);
   const [themeMainColors, setThemeMainColors] = useState({ ...mainColors });
   const [themeColors, setThemeColors] = useState({ ...colors });
@@ -396,21 +401,6 @@ const ThemeGenerator = () => {
     }, 400);
   };
 
-  const handleProceed = () => {
-    const stepsData = proceedStepsStatus(
-      useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
-      useCurrentTenantInfoStore.getState()?.currentStep - 1
-    );
-    UpdateTenantStepApi.mutate({
-      params: {
-        tenantId:
-          useCurrentTenantInfoStore.getState()?.currentTenantInfo.tenantId,
-        step: stepsData.step,
-      },
-      data: stepsData.steps,
-    });
-  };
-
   //handle the submission
   const handleSubmit = () => {
     console.log(themeColors, "====themecolors");
@@ -449,36 +439,6 @@ const ThemeGenerator = () => {
     onError(error, variables, context) {},
   });
 
-  //update tenant steps
-  const UpdateTenantStepApi = useMutation({
-    mutationFn: (sendData: {
-      params: Record<string, any>;
-      data: Record<string, any>;
-    }) => {
-      return makeRequest<GetTenantIdByNameModel>({
-        endpoint: ApiConstants.UpdateTenantStep,
-        method: HttpMethodApi.Patch,
-        params: sendData.params,
-        data: sendData.data,
-      });
-    },
-    onMutate(variables) {
-      setLoading(true);
-    },
-    onSettled(data, error, variables, context) {
-      setLoading(false);
-    },
-    onSuccess(data, variables, context) {
-      if (data.result) {
-        useCurrentTenantInfoStore.getState().setCurrentTenantInfo(data.result);
-        useCurrentTenantInfoStore.getState().setCurrentStep(data.result.step!);
-      }
-    },
-    onError(error, variables, context) {
-      showSnackbar(error.message, "danger");
-    },
-  });
-
   return (
     <>
       <div className="flex justify-between px-5 pt-3">
@@ -487,6 +447,7 @@ const ThemeGenerator = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5">
         {Object.entries(themeMainColors).map(([key, value]) => (
           <ColorBox
+            key={key}
             label={key as DisplayColorKey}
             color={value}
             handleThemeColorsUpdate={handleThemeMainColorsUpdate}
@@ -498,6 +459,7 @@ const ThemeGenerator = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4  gap-4 p-5 ">
         {Object.entries(themeDisplayColor.light).map(([key, value]) => (
           <ColorBox
+            key={key}
             label={key as DisplayColorKey}
             color={value as DisplayColorKey}
             handleThemeColorsUpdate={handleThemeColorsUpdate}
@@ -534,7 +496,7 @@ const ColorBox = ({
   const ColorPickerDropDown = () => {
     return (
       <div
-        key={label}
+        key={`${label}-${color}`}
         className={`md:min-w-24 rounded-lg overflow-hidden shadow-lightShadow ${
           isCustomizable ? "cursor-pointer" : "cursor-default"
         }`}

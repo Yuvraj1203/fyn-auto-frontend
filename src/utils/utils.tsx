@@ -1,5 +1,6 @@
 import { TenantStatusEnum } from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
 import { addToast } from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 type SnackbarEnum =
   | "success"
@@ -25,7 +26,8 @@ type UpdateStepsStatusReturn = {
 
 export const proceedStepsStatus = (
   steps: Step[],
-  step: number
+  step: number,
+  router: ReturnType<typeof useRouter>
 ): UpdateStepsStatusReturn => {
   const updatedSteps = [...steps];
 
@@ -54,17 +56,12 @@ export const proceedStepsStatus = (
   }
 
   if (nextPendingIndex === -1) {
+    router.push("/");
     return { message: "All steps completed", steps: updatedSteps, step: 5 };
   }
 
   // Set next pending step to ongoing
   updatedSteps[nextPendingIndex].status = TenantStatusEnum.ongoing;
-
-  console.log({
-    message: "updation successful",
-    steps: updatedSteps,
-    step: nextPendingIndex + 1,
-  });
   return {
     message: "updation successful",
     steps: updatedSteps,
