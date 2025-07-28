@@ -137,11 +137,7 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
       data: formData,
     };
 
-    if (currentStep == 2) {
-      FileConfigsUploadApi.mutate(reqBody);
-    } else if (currentStep == 4) {
-      //font files
-    }
+    FileConfigsUploadApi.mutate(reqBody);
   };
 
   const FileConfigsUploadApi = useMutation({
@@ -177,16 +173,14 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
     <>
       <div className="grow overflow-auto customScrollbar">
         <p className="text-outline px-5 pt-5">
-          {currentStep == 2
-            ? "Upload the mandatory files (.plist, .json) you want to use in your app."
-            : "Upload the font files (.ttf) you want to use in your app."}
+          {
+            "Upload the 'GoogleService-Info.plist', 'google-services.json' & 'firebase.json' files required for configuring Firebase in your app."
+          }
         </p>
         <FileDropZone
           setFiles={setFiles}
-          extensions={currentStep == 2 ? [".json", ".plist"] : [".ttf"]}
-          fileUploadFunction={
-            currentStep == 2 ? mergeValidFiles : mergeValidTTFFiles
-          }
+          extensions={[".json", ".plist"]}
+          fileUploadFunction={mergeValidFiles}
           hasCustomFunction={true}
         />
         {files.length > 0 && (
