@@ -14,8 +14,15 @@ export type TenantFormDataType = {
   oktaDomain?: string | undefined;
 };
 
+type fileConfigsType = {
+  googleServiceInfoPlist: string;
+  googleServicesJson: string;
+  firebaseAdminsdkJson: string;
+};
+
 export type SetTenantInfoModel = {
   message: string;
   uploaded?: string[];
   tenantFormData?: TenantFormDataType;
+  fileConfigsData?: fileConfigsType;
 };

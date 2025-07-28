@@ -5,6 +5,8 @@ import { persist } from "zustand/middleware";
 type TenantDataStoreType = {
   tenantFormInfo: TenantFormDataType;
   setTenantFormInfo: (value: TenantFormDataType) => void;
+  filesConfig: File[];
+  setFilesConfig: (value: File[]) => void;
 };
 
 const useTenantDataStore = create<TenantDataStoreType>()(
@@ -13,11 +15,14 @@ const useTenantDataStore = create<TenantDataStoreType>()(
       tenantFormInfo: {},
       setTenantFormInfo: (value: TenantFormDataType) =>
         set({ tenantFormInfo: value }),
+      filesConfig: [],
+      setFilesConfig: (value: File[]) => set({ filesConfig: value }),
     }),
     {
       name: "tenant-data-store",
       partialize: (state) => ({
         tenantFormInfo: state.tenantFormInfo,
+        filesConfig: state.filesConfig,
       }),
     }
   )

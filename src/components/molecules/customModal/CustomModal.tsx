@@ -52,7 +52,7 @@ const CustomModal = ({
               {content && <ModalBody>{content}</ModalBody>}
               <ModalFooter>
                 {closeButton && (
-                  <Button color="danger" variant="light" onPress={onClose}>
+                  <Button color="danger" variant="ghost" onPress={onClose}>
                     Close
                   </Button>
                 )}

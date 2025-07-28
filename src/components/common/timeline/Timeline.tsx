@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 
 const Timeline = () => {
   const currentStepFromStore = useCurrentTenantInfoStore(
-    (state) => state.currentTenantInfo.step
+    (state) => state.currentStep
   );
   const timelineDataFromStore = useCurrentTenantInfoStore(
     (state) => state.currentTenantInfo
@@ -20,6 +20,7 @@ const Timeline = () => {
   useEffect(() => {
     setCurrentStep(currentStepFromStore);
   }, [currentStepFromStore]);
+
   useEffect(() => {
     setTimelineData(timelineDataFromStore);
   }, [timelineDataFromStore]);

@@ -6,7 +6,7 @@ import FileConfigMain from "../file-configs/FileConfigMain";
 import ThemeGenerator from "../themeGenerator/ThemeGenerator";
 import IconGenerator from "../iconGenerator/IconGenerator";
 import FontsUpload from "../fontsUpload/FontsUpload";
-import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
+import { base64ToFile, proceedStepsStatus, showSnackbar } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
 import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
 import { ApiConstants } from "@/services/apiConstants";
@@ -18,6 +18,7 @@ const TenantSteps = () => {
   const currentStepFromStore = useCurrentTenantInfoStore(
     (state) => state.currentStep
   );
+  const tenantDataStore = useTenantDataStore();
   const [currentStep, setCurrentStep] = useState(currentStepFromStore);
 
   const [uiLoading, setUiLoading] = useState(false);
@@ -27,9 +28,10 @@ const TenantSteps = () => {
   }, [currentStepFromStore]);
 
   useEffect(() => {
-    const { tenantId } = useCurrentTenantInfoStore.getState().currentTenantInfo;
+    const { tenantId, tenancyName } =
+      useCurrentTenantInfoStore.getState().currentTenantInfo;
     if (tenantId) {
-      GetTenantFromDataApi.mutate({ tenantId });
+      GetTenantFormDataApi.mutate({ tenantId, tenancyName });
     }
   }, []);
 
@@ -80,10 +82,10 @@ const TenantSteps = () => {
   });
 
   //set tenant info api
-  const GetTenantFromDataApi = useMutation({
+  const GetTenantFormDataApi = useMutation({
     mutationFn: (sendData: Record<string, any>) => {
       return makeRequest<SetTenantInfoModel>({
-        endpoint: ApiConstants.GetTenantFromData,
+        endpoint: ApiConstants.GetTenantFormData,
         method: HttpMethodApi.Get,
         data: sendData,
       });
@@ -100,13 +102,54 @@ const TenantSteps = () => {
           data?.result?.tenantFormData?.tenantId ==
           useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId
         ) {
-          console.log("this is from where data inserted");
-          useTenantDataStore
-            .getState()
-            .setTenantFormInfo(data?.result?.tenantFormData!);
+          tenantDataStore.setTenantFormInfo(data?.result?.tenantFormData!);
         } else {
-          console.log("this is from where data doesnt inserted");
-          useTenantDataStore.getState().setTenantFormInfo({});
+          tenantDataStore.setTenantFormInfo({});
+        }
+        // file config
+        const fileConfigs = data.result.fileConfigsData;
+        if (fileConfigs) {
+          const {
+            googleServicesJson,
+            googleServiceInfoPlist,
+            firebaseAdminsdkJson,
+          } = fileConfigs;
+
+          const files: File[] = [];
+
+          if (googleServicesJson) {
+            files.push(
+              base64ToFile(
+                googleServicesJson,
+                "google-services.json",
+                "application/json"
+              )
+            );
+          }
+
+          if (googleServiceInfoPlist) {
+            files.push(
+              base64ToFile(
+                googleServiceInfoPlist,
+                "GoogleService-Info.plist",
+                "application/xml"
+              )
+            );
+          }
+
+          if (firebaseAdminsdkJson) {
+            files.push(
+              base64ToFile(
+                firebaseAdminsdkJson,
+                "firebase-adminsdk.json",
+                "application/json"
+              )
+            );
+          }
+
+          tenantDataStore.setFilesConfig(files);
+        } else {
+          tenantDataStore.setFilesConfig([]);
         }
       }
     },

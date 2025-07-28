@@ -1,7 +1,7 @@
 export const ApiConstants = {
   GetTenantInfo: "api/v1/tenantInfo/getTenantInfo",
   SetTenantInfo: "api/v1/tenantInfo/setTenantInfo",
-  GetTenantFromData: "api/v1/tenantInfo/getTenantFromData",
+  GetTenantFormData: "api/v1/tenantInfo/getTenantFormData",
   AddTenant: "api/v1/tenantInfo/addTenant",
   UpdateTenantStep: "api/v1/tenantInfo/updateTenantStep",
   createFonts: "/api/v1/fontsUpload/createFonts",
@@ -9,6 +9,7 @@ export const ApiConstants = {
   RemoveTenant: "api/v1/tenantInfo/removeTenant",
   GetTenantIdByName: "api/v1/tenantInfo/getTenantIdByName",
   FileConfigsUpload: "api/v1/fileConfigs/fileConfigsUpload",
+  DeleteFile: "api/v1/fileConfigs/deleteFile",
   CreateColors: "/api/v1/colorStep/createColors",
   iconGenerator: "/api/v1/iconGenerator/iconGenerator",
 };

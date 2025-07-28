@@ -8,15 +8,18 @@ import { useMutation } from "@tanstack/react-query";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { ApiConstants } from "@/services/apiConstants";
 import { showSnackbar } from "@/utils/utils";
-import { useCurrentTenantInfoStore } from "@/store";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 import { SetTenantInfoModel } from "@/services/models";
 import { ProceedButton } from "@/components/common";
+import { CustomModal } from "@/components/molecules";
+import { Button } from "@heroui/react";
 
 type FileConfigMainProps = {
   handleProceed: () => void;
 };
 
 const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
+  const tenantFilesStores = useTenantDataStore(); // store
   const currentStepFromStore = useCurrentTenantInfoStore(
     (state) => state.currentStep
   );
@@ -26,17 +29,25 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
-    setFiles([]);
+    // setFiles([]);
+    setFiles(tenantFilesStores.filesConfig);
     setCurrentStep(currentStepFromStore);
   }, [currentStepFromStore]);
 
   const handleRemoveFile = (fileToRemove: File) => {
-    setFiles((prev) =>
-      prev.filter(
+    DeleteFileApi.mutate({
+      tenantId: tenantFilesStores.tenantFormInfo.tenantId,
+      tenancyName: tenantFilesStores.tenantFormInfo.tenancyName,
+      fileName: fileToRemove.name,
+    });
+    setFiles((prev) => {
+      let remainingFiles = prev.filter(
         (file) =>
           file.name !== fileToRemove.name || file.size !== fileToRemove.size
-      )
-    );
+      );
+      tenantFilesStores.setFilesConfig(remainingFiles);
+      return remainingFiles;
+    });
   };
 
   const mergeValidTTFFiles = (
@@ -77,8 +88,7 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
 
       const isGoogleJson = lowerName === "google-services.json";
       const isPlist = file.name === "GoogleService-Info.plist";
-      const isExtraJson =
-        lowerName.endsWith(".json") && lowerName !== "google-services.json";
+      const isExtraJson = lowerName.includes("firebase-adminsdk");
 
       // Only allow specific files
       if (isGoogleJson || isPlist || isExtraJson) {
@@ -105,14 +115,6 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
     }
 
     return finalFiles;
-  };
-
-  const imagePreviewer = (file: File) => {
-    if (file.type.startsWith("image/")) {
-      return [URL.createObjectURL(file), ImageType.png];
-    } else {
-      return [File, ImageType.svg];
-    }
   };
 
   const handleSubmit = () => {
@@ -169,6 +171,31 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
     },
   });
 
+  //delete file from server
+  const DeleteFileApi = useMutation({
+    mutationFn: (sendData: Record<string, any>) => {
+      return makeRequest<SetTenantInfoModel>({
+        endpoint: ApiConstants.DeleteFile,
+        method: HttpMethodApi.Delete,
+        data: sendData,
+      });
+    },
+    onMutate(variables) {
+      // setLoading(true);
+    },
+    onSettled(data, error, variables, context) {
+      // setLoading(false);
+    },
+    onSuccess(data, variables, context) {
+      if (data.result) {
+        showSnackbar(data.result.message, "success");
+      }
+    },
+    onError(error, variables, context) {
+      showSnackbar(error.message, "danger");
+    },
+  });
+
   return (
     <>
       <div className="grow overflow-auto customScrollbar">
@@ -192,8 +219,8 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
                   className="flex items-center gap-4 rounded-2xl p-3 border-1"
                 >
                   <CustomImage
-                    src={imagePreviewer(file).at(0)}
-                    type={imagePreviewer(file).at(1)}
+                    src={File}
+                    type={ImageType.svg}
                     width={30}
                     height={30}
                     className="rounded-md text-outline"
@@ -204,12 +231,22 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
                   <span className="text-success rounded-full hover:bg-success hover:text-onPrimary duration-400 cursor-pointer">
                     <TickCircle />
                   </span>
-                  <span
-                    className=" text-danger rounded-full hover:bg-danger hover:text-onPrimary duration-400 cursor-pointer "
-                    onClick={() => handleRemoveFile(file)}
-                  >
-                    <CloseCircle />
-                  </span>
+                  <CustomModal
+                    title="Delete File"
+                    content={
+                      <div>
+                        <p>Are you sure you want to delete this file?</p>
+                      </div>
+                    }
+                    closeButton={true}
+                    actionButton="Delete"
+                    actionButtonPress={() => handleRemoveFile(file)}
+                    trigger={
+                      <Button className="min-w-fit h-fit p-0 bg-background text-danger rounded-full hover:bg-danger hover:text-onPrimary duration-400 cursor-pointer ">
+                        <CloseCircle />
+                      </Button>
+                    }
+                  />
                 </div>
               );
             })}

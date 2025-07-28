@@ -2,6 +2,7 @@
 
 import { CustomImage } from "@/components/atoms";
 import { CloseCircle, Images, TickCircle, Upload } from "@/public";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 import { showSnackbar } from "@/utils/utils";
 import React, {
   ChangeEvent,
@@ -27,7 +28,8 @@ const FileDropZone: FC<FileDropZoneProps> = ({
   hasCustomFunction = false,
   fileUploadFunction,
 }) => {
-  // const [files, setFiles] = useState<File[]>([]);
+  const setTenantFilesStores = useTenantDataStore().setFilesConfig; // store
+
   const [dropZoneActive, setDropZoneActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -60,11 +62,14 @@ const FileDropZone: FC<FileDropZoneProps> = ({
   };
 
   const uploadFilesFunction = (prev: File[], incoming: File[]): File[] => {
+    let response;
     if (hasCustomFunction && fileUploadFunction) {
-      return fileUploadFunction(prev, incoming);
+      response = fileUploadFunction(prev, incoming);
     } else {
-      return removeDuplicacy(prev, incoming);
+      response = removeDuplicacy(prev, incoming);
     }
+    setTenantFilesStores(response);
+    return response;
   };
 
   const handleDrop = useCallback((event: DragEvent<HTMLDivElement>) => {
