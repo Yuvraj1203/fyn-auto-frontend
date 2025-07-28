@@ -1,5 +1,5 @@
 "use client";
-import { useCurrentTenantInfoStore } from "@/store";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 import React, { useEffect, useState } from "react";
 import TenantInfoForm from "../tenantInfoForm/TenantInfoForm";
 import FileConfigMain from "../file-configs/FileConfigMain";
@@ -8,7 +8,7 @@ import IconGenerator from "../iconGenerator/IconGenerator";
 import FontsUpload from "../fontsUpload/FontsUpload";
 import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
-import { GetTenantIdByNameModel } from "@/services/models";
+import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { useRouter } from "next/navigation";
@@ -20,9 +20,18 @@ const TenantSteps = () => {
   );
   const [currentStep, setCurrentStep] = useState(currentStepFromStore);
 
+  const [uiLoading, setUiLoading] = useState(false);
+
   useEffect(() => {
     setCurrentStep(currentStepFromStore);
   }, [currentStepFromStore]);
+
+  useEffect(() => {
+    const { tenantId } = useCurrentTenantInfoStore.getState().currentTenantInfo;
+    if (tenantId) {
+      GetTenantFromDataApi.mutate({ tenantId });
+    }
+  }, []);
 
   const handleProceed = () => {
     const stepsData = proceedStepsStatus(
@@ -70,10 +79,46 @@ const TenantSteps = () => {
     },
   });
 
+  //set tenant info api
+  const GetTenantFromDataApi = useMutation({
+    mutationFn: (sendData: Record<string, any>) => {
+      return makeRequest<SetTenantInfoModel>({
+        endpoint: ApiConstants.GetTenantFromData,
+        method: HttpMethodApi.Get,
+        data: sendData,
+      });
+    },
+    onMutate(variables) {
+      setUiLoading(true);
+    },
+    onSettled(data, error, variables, context) {
+      setUiLoading(false);
+    },
+    onSuccess(data, variables, context) {
+      if (data.result) {
+        if (
+          data?.result?.tenantFormData?.tenantId ==
+          useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId
+        ) {
+          console.log("this is from where data inserted");
+          useTenantDataStore
+            .getState()
+            .setTenantFormInfo(data?.result?.tenantFormData!);
+        } else {
+          console.log("this is from where data doesnt inserted");
+          useTenantDataStore.getState().setTenantFormInfo({});
+        }
+      }
+    },
+    onError(error, variables, context) {
+      showSnackbar(error.message, "danger");
+    },
+  });
+
   return (
     <>
       {currentStep == 1 ? (
-        <TenantInfoForm handleProceed={handleProceed} />
+        <TenantInfoForm handleProceed={handleProceed} uiLoading={uiLoading} />
       ) : currentStep == 2 ? (
         <FileConfigMain handleProceed={handleProceed} />
       ) : currentStep == 3 ? (

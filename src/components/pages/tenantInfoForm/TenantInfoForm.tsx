@@ -6,17 +6,20 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormTextInput } from "@/components/molecules";
 import { FormTextInputType } from "@/components/molecules/customTextInput/FormTextInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { ApiConstants } from "@/services/apiConstants";
-import { SetTenantInfoModel } from "@/services/models";
+import { SetTenantInfoModel, TenantFormDataType } from "@/services/models";
 import { showSnackbar } from "@/utils/utils";
 import useCurrentTenantInfoStore from "@/store/currentTenantInfoStore/currentTenantInfoStore";
 import { ProceedButton } from "@/components/common";
+import { useTenantDataStore } from "@/store";
+import { Spinner } from "@heroui/react";
 
 type TenantInfoFormProps = {
   handleProceed: () => void;
+  uiLoading: boolean;
 };
 
 type SelectedEnvironmentType = {
@@ -25,23 +28,29 @@ type SelectedEnvironmentType = {
   ApiUrl: string;
 };
 
-const TenantInfoForm = ({ handleProceed }: TenantInfoFormProps) => {
+const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
   const currentTenantInfo = useCurrentTenantInfoStore().currentTenantInfo;
+  const allTenantFormInfo = useTenantDataStore().tenantFormInfo;
+  const tenantFormInfo =
+    allTenantFormInfo &&
+    allTenantFormInfo.tenantId === currentTenantInfo.tenantId
+      ? allTenantFormInfo
+      : undefined;
   const envDropDown = [
     {
       key: "dev",
       label: "Development",
-      ApiUrl: "https://dev.fyndev.com/",
+      ApiUrl: "https://aa.fyndev.com/",
     },
     {
       key: "uat",
       label: "UAT",
-      ApiUrl: "https://uat.fyndev.com/",
+      ApiUrl: "https://aa.fynuat.com/",
     },
     {
       key: "prod",
       label: "Production",
-      ApiUrl: "https://prod.fyndev.com/",
+      ApiUrl: "https://service.fynancial.com/",
     },
   ];
 
@@ -50,6 +59,15 @@ const TenantInfoForm = ({ handleProceed }: TenantInfoFormProps) => {
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     SelectedEnvironmentType | undefined
   >(envDropDown[0]);
+
+  useEffect(() => {
+    const envObject = envDropDown.find(
+      (item) => item.ApiUrl == tenantFormInfo?.apiUrl
+    );
+    handleSelectItemChange(
+      envObject?.key ? envObject?.key : envDropDown[0].key
+    );
+  }, [tenantFormInfo]);
 
   // Define Zod schema
   const schema = z.object({
@@ -82,12 +100,21 @@ const TenantInfoForm = ({ handleProceed }: TenantInfoFormProps) => {
   // Infer TypeScript type from Zod
   type FormSchema = z.infer<typeof schema>;
 
-  // methods == {register,error,handleSubmit}
   const methods = useForm<FormSchema>({
     defaultValues: {
-      apiUrl: selectedEnvironment?.ApiUrl,
-      tenantId: currentTenantInfo.tenantId,
-      tenancyName: currentTenantInfo.tenancyName,
+      apiUrl: selectedEnvironment?.ApiUrl ?? tenantFormInfo?.apiUrl ?? "",
+      tenantId: currentTenantInfo.tenantId ?? tenantFormInfo?.tenantId ?? "",
+      tenancyName:
+        currentTenantInfo.tenancyName ?? tenantFormInfo?.tenancyName ?? "",
+      appName: tenantFormInfo?.appName ?? "",
+      auth0ClientId: tenantFormInfo?.auth0ClientId ?? "",
+      auth0Domain: tenantFormInfo?.auth0Domain ?? "",
+      auth0Organization: tenantFormInfo?.auth0Organization ?? "",
+      bundleId: tenantFormInfo?.bundleId ?? "",
+      oktaClientId: tenantFormInfo?.oktaClientId ?? "",
+      oktaDomain: tenantFormInfo?.oktaDomain ?? "",
+      packageName: tenantFormInfo?.packageName ?? "",
+      sentryDsn: tenantFormInfo?.sentryDsn ?? "",
     },
     resolver: zodResolver(schema),
   });
@@ -119,6 +146,9 @@ const TenantInfoForm = ({ handleProceed }: TenantInfoFormProps) => {
     },
     onSuccess(data, variables, context) {
       if (data.result) {
+        useTenantDataStore
+          .getState()
+          .setTenantFormInfo(data.result.tenantFormData!);
         showSnackbar(data.result.message, "success");
         handleProceed();
       }
@@ -127,6 +157,14 @@ const TenantInfoForm = ({ handleProceed }: TenantInfoFormProps) => {
       showSnackbar(error.message, "danger");
     },
   });
+
+  if (uiLoading) {
+    return (
+      <div className="flex justify-center items-center grow">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <FormProvider {...methods}>

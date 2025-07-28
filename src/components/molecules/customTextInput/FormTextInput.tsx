@@ -57,9 +57,7 @@ const FormTextInput = <T extends Record<string, any>>({
             {...register(name)}
             errorMessage={String(errors[name]?.message)}
             isInvalid={errors[name] ? true : false}
-            defaultSelectedKeys={
-              selectedValue?.key ? [selectedValue.key] : undefined
-            }
+            selectedKeys={selectedValue?.key ? [selectedValue.key] : []}
             onChange={(e) => handleSelectItemChange?.(e.target.value)}
             className={style}
             classNames={{
