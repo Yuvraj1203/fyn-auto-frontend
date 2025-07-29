@@ -3,7 +3,7 @@ import { ColorPopover, ProceedButton } from "@/components/common";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
-import { useCurrentTenantInfoStore } from "@/store";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 import {
   generateColorScheme,
   getContrastText,
@@ -22,8 +22,6 @@ type ColorBoxProps = {
 
 export type ColorKey = keyof typeof colors.light;
 
-type MainColorKey = keyof typeof mainColors;
-
 type DisplayColorKey = keyof typeof displayColor.light;
 
 export type ThemeColorSet = {
@@ -35,43 +33,47 @@ export type ThemeColorSet = {
   onSecondary: string;
   secondaryContainer: string;
   onSecondaryContainer: string;
+  tertiary: string;
+  onTertiary: string;
+  tertiaryContainer: string;
+  onTertiaryContainer: string;
   error: string;
   onError: string;
+  errorContainer: string;
+  onErrorContainer: string;
   background: string;
+  onBackground: string;
   surface: string;
-  surfaceVariant: string;
   onSurface: string;
+  surfaceVariant: string;
   onSurfaceVariant: string;
   outline: string;
   outlineVariant: string;
-  inversePrimary: string;
-  inverseSurface: string;
-  inverseOnSurface: string;
-  surfaceTint: string;
   shadow: string;
   scrim: string;
-  surfaceContainer: string;
-  surfaceContainerHigh: string;
-  surfaceContainerHighest: string;
-  surfaceContainerLow: string;
-  surfaceContainerLowest: string;
-  surfaceDim: string;
-  surfaceBright: string;
+  inverseSurface: string;
+  inverseOnSurface: string;
+  inversePrimary: string;
+  surfaceDisabled: string;
+  onSurfaceDisabled: string;
   backdrop: string;
+  lightPrimaryContainer: string;
+  elevation: {
+    level0: string;
+    level1: string;
+    level2: string;
+    level3: string;
+    level4: string;
+    level5: string;
+  };
 };
 
-export type ThemeColors = {
+export type ThemeColorsSetType = {
   light: ThemeColorSet;
   dark: ThemeColorSet;
 };
 
-const mainColors = {
-  primary: "#7845AC",
-  secondary: "#665A6F",
-  tertiary: "#805158",
-};
-
-const colors = {
+export const colors = {
   light: {
     primary: "#7845AC",
     onPrimary: "#FFFFFF",
@@ -302,9 +304,21 @@ type ThemeGeneratorProps = {
 };
 
 const ThemeGenerator = ({ handleProceed }: ThemeGeneratorProps) => {
+  const themeColorStore = useTenantDataStore(); // store
+
+  const mainColors = {
+    primary: themeColorStore?.themeColors?.light?.primary ?? "#7845AC",
+    secondary: themeColorStore?.themeColors?.light?.secondary ?? "#665A6F",
+    tertiary: themeColorStore?.themeColors?.light?.tertiary ?? "#805158",
+  };
+
   const [loading, setLoading] = useState(false);
   const [themeMainColors, setThemeMainColors] = useState({ ...mainColors });
-  const [themeColors, setThemeColors] = useState({ ...colors });
+  const [themeColors, setThemeColors] = useState(
+    themeColorStore.themeColors.light?.primary
+      ? { ...(themeColorStore.themeColors as ThemeColorsSetType) }
+      : { ...colors }
+  );
   const [themeDisplayColor, setThemeDisplayColor] = useState({
     ...displayColor,
   });
@@ -317,8 +331,13 @@ const ThemeGenerator = ({ handleProceed }: ThemeGeneratorProps) => {
   ): DisplayColor =>
     Object.fromEntries(keys.map((key) => [key, source[key]])) as DisplayColor;
 
-  //display colors
   useEffect(() => {
+    //set colors to store
+    themeColorStore.setThemeColors({
+      light: themeColors.light,
+      dark: themeColors.dark,
+    });
+    //display colors
     setThemeDisplayColor({
       light: pickColorKeys(themeColors.light, requiredColorKeys),
       dark: pickColorKeys(themeColors.dark, requiredColorKeys),
@@ -403,7 +422,6 @@ const ThemeGenerator = ({ handleProceed }: ThemeGeneratorProps) => {
 
   //handle the submission
   const handleSubmit = () => {
-    console.log(themeColors, "====themecolors");
     CreateColorsApi.mutate({
       params: {
         tenantId:

@@ -3,7 +3,7 @@ import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 import React, { useEffect, useState } from "react";
 import TenantInfoForm from "../tenantInfoForm/TenantInfoForm";
 import FileConfigMain from "../file-configs/FileConfigMain";
-import ThemeGenerator from "../themeGenerator/ThemeGenerator";
+import ThemeGenerator, { colors } from "../themeGenerator/ThemeGenerator";
 import IconGenerator from "../iconGenerator/IconGenerator";
 import FontsUpload from "../fontsUpload/FontsUpload";
 import { base64ToFile, proceedStepsStatus, showSnackbar } from "@/utils/utils";
@@ -108,7 +108,7 @@ const TenantSteps = () => {
         }
         // file config
         const fileConfigs = data.result.fileConfigsData;
-        if (fileConfigs) {
+        if (fileConfigs?.success) {
           const {
             googleServicesJson,
             googleServiceInfoPlist,
@@ -150,6 +150,15 @@ const TenantSteps = () => {
           tenantDataStore.setFilesConfig(files);
         } else {
           tenantDataStore.setFilesConfig([]);
+        }
+        if (data.result?.themeColors?.id) {
+          const themeColorsTemp = {
+            light: data.result.themeColors.light,
+            dark: data.result.themeColors.dark,
+          };
+          tenantDataStore.setThemeColors(themeColorsTemp);
+        } else {
+          tenantDataStore.setThemeColors(colors);
         }
       }
     },

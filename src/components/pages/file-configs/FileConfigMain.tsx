@@ -29,8 +29,11 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
-    // setFiles([]);
     setFiles(tenantFilesStores.filesConfig);
+  }, [tenantFilesStores.filesConfig]);
+
+  useEffect(() => {
+    // setFiles([]);
     setCurrentStep(currentStepFromStore);
   }, [currentStepFromStore]);
 
