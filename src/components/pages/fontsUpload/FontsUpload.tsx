@@ -10,6 +10,10 @@ import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { showSnackbar } from "@/utils/utils";
 import { SetTenantInfoModel } from "@/services/models";
 import { useCurrentTenantInfoStore } from "@/store";
+import CustomTextInput, {
+  CustomTextInputType,
+} from "@/components/molecules/customTextInput/CustomTextInput";
+import { Roboto, Playfair_Display, Signika_Negative } from "next/font/google";
 
 type DropBoxContainerProps = {
   content?: string;
@@ -22,32 +26,98 @@ type FontsUploadProps = {
   handleProceed: () => void;
 };
 
+enum FontFamilyEnum {
+  quicksand = "quicksand",
+  playfair = "playfair",
+  signika = "signika",
+  roboto = "roboto",
+  other = "other",
+}
+
+export const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"], // depends on font
+  display: "swap",
+});
+
+export const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+  variable: "--font-playfair",
+});
+
+export const signika = Signika_Negative({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"], // adjust weights as needed
+  display: "swap",
+});
+
 const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
+  const fontDropDown = [
+    {
+      key: "quicksand",
+      label: "QuickSand",
+      className: "",
+    },
+    {
+      key: "playfair",
+      label: "PlayFair",
+      className: playfair.className,
+    },
+    {
+      key: "signika",
+      label: "Signika",
+      className: signika.className,
+    },
+    {
+      key: "roboto",
+      label: "Roboto",
+      className: roboto.className,
+    },
+    {
+      key: "other",
+      label: "Other",
+      className: "",
+    },
+  ];
+
   const [loading, setLoading] = useState(false);
   const [lightFontFile, setLightFontFile] = useState<File[]>([]);
   const [regularFontFile, setRegularFontFile] = useState<File[]>([]);
   const [boldFontFile, setBoldFontFile] = useState<File[]>([]);
+  const [selectedFont, setSelectedFont] = useState(fontDropDown[0]);
+
+  const handleSelectItemChange = (value: string | number) => {
+    const selectedFont = fontDropDown.find((item, index) => item.key == value);
+    setSelectedFont(selectedFont!);
+  };
 
   const handleSubmit = () => {
-    if (
-      lightFontFile.length == 0 &&
-      regularFontFile.length == 0 &&
-      boldFontFile.length == 0
-    ) {
-      showSnackbar("Please upload files", "warning");
-      return;
-    }
+    if (!selectedFont?.key)
+      return showSnackbar("Please select the font", "warning");
     const formData = new FormData();
-    if (lightFontFile[0]) {
-      formData.append("lightFont", lightFontFile[0]); // must match FastAPI param name
-    }
+    if (selectedFont?.key == FontFamilyEnum.other) {
+      if (
+        lightFontFile.length == 0 &&
+        regularFontFile.length == 0 &&
+        boldFontFile.length == 0
+      ) {
+        showSnackbar("Please upload files", "warning");
+        return;
+      }
 
-    if (regularFontFile[0]) {
-      formData.append("regularFont", regularFontFile[0]); // must match FastAPI param name
-    }
+      if (lightFontFile[0]) {
+        formData.append("lightFont", lightFontFile[0]); // must match FastAPI param name
+      }
 
-    if (boldFontFile[0]) {
-      formData.append("boldFont", boldFontFile[0]); // must match FastAPI param name
+      if (regularFontFile[0]) {
+        formData.append("regularFont", regularFontFile[0]); // must match FastAPI param name
+      }
+
+      if (boldFontFile[0]) {
+        formData.append("boldFont", boldFontFile[0]); // must match FastAPI param name
+      }
     }
 
     FontGeneratorApi.mutate({
@@ -56,6 +126,8 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
           useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId,
         tenancyName:
           useCurrentTenantInfoStore.getState().currentTenantInfo.tenancyName,
+        defaultFont: selectedFont?.key == FontFamilyEnum.other ? false : true,
+        defaultFontName: selectedFont?.key,
       },
       data: formData,
     });
@@ -118,33 +190,56 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
   return (
     <>
       <div className="flex flex-col gap-5 p-5 grow">
-        <Button
-          className="min-h-10 w-fit self-end font-semibold "
-          color="primary"
-          variant={"ghost"}
-          size={"md"}
-          onClick={handleProceed}
-        >
-          {"Default Fonts (QuickSand)"}
-        </Button>
-        <DropBoxContainer
-          content={`Upload light weight font file`}
-          title={`Light`}
-          setFiles={setLightFontFile}
-          files={lightFontFile}
+        <CustomTextInput
+          label="Font Family"
+          type={CustomTextInputType.select}
+          displayKey={"label"}
+          selectItems={fontDropDown}
+          selectedValue={selectedFont}
+          isRequired={true}
+          handleSelectItemChange={handleSelectItemChange}
         />
-        <DropBoxContainer
-          content={`Upload regular weight font file`}
-          title={`Regular`}
-          setFiles={setRegularFontFile}
-          files={regularFontFile}
-        />
-        <DropBoxContainer
-          content={`Upload bold weight font file`}
-          title={`Bold`}
-          setFiles={setBoldFontFile}
-          files={boldFontFile}
-        />
+        {selectedFont?.key == FontFamilyEnum.other ? (
+          <>
+            <DropBoxContainer
+              content={`Upload light weight font file`}
+              title={`Light`}
+              setFiles={setLightFontFile}
+              files={lightFontFile}
+            />
+            <DropBoxContainer
+              content={`Upload regular weight font file`}
+              title={`Regular`}
+              setFiles={setRegularFontFile}
+              files={regularFontFile}
+            />
+            <DropBoxContainer
+              content={`Upload bold weight font file`}
+              title={`Bold`}
+              setFiles={setBoldFontFile}
+              files={boldFontFile}
+            />
+          </>
+        ) : (
+          <>
+            <div
+              className={`${selectedFont?.className} p-5 flex flex-col items-center gap-2 text-center`}
+            >
+              <p className={` font-normal`}>
+                {"The quick brown fox jumps over the lazy dog. 1234567890"}
+              </p>
+              <p className={` font-medium`}>
+                {"The quick brown fox jumps over the lazy dog. 1234567890"}
+              </p>
+              <p className={` font-semibold`}>
+                {"The quick brown fox jumps over the lazy dog. 1234567890"}
+              </p>
+              <p className={` font-bold`}>
+                {"The quick brown fox jumps over the lazy dog. 1234567890"}
+              </p>
+            </div>
+          </>
+        )}
       </div>
       <ProceedButton
         buttonType={"submit"}
