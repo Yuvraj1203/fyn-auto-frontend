@@ -31,6 +31,29 @@ export type ThemeColorsType = {
   message?: string;
 };
 
+export type Base64FileType = {
+  base64: string;
+  fileName: string;
+};
+
+export type FontsFilesType = {
+  boldFont?: Base64FileType;
+  lightFont?: Base64FileType;
+  regularFont?: Base64FileType;
+  success?: true;
+};
+
+export type FontsDataType = {
+  id?: string;
+  tenancyName?: string;
+  defaultFontName?: string;
+  files?: FontsFilesType;
+  tenantId?: string;
+  lightFontPath?: string;
+  regularFontPath?: string;
+  boldFontPath?: string;
+};
+
 export type SetTenantInfoModel = {
   id?: string;
   message: string;
@@ -38,4 +61,5 @@ export type SetTenantInfoModel = {
   tenantFormData?: TenantFormDataType;
   fileConfigsData?: fileConfigsType;
   themeColors?: ThemeColorsType;
+  fontsData?: FontsDataType;
 };

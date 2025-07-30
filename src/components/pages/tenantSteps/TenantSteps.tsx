@@ -160,6 +160,48 @@ const TenantSteps = () => {
         } else {
           tenantDataStore.setThemeColors(colors);
         }
+        if (data.result.fontsData?.id) {
+          const fontName = data.result.fontsData.defaultFontName;
+          const fileConfigs = data.result.fontsData.files; //files
+          if (fileConfigs?.success) {
+            const files: File[] = [];
+
+            const { lightFont, regularFont, boldFont } = fileConfigs;
+
+            if (lightFont) {
+              files.push(
+                base64ToFile(
+                  lightFont.base64,
+                  `light-${lightFont.fileName}`,
+                  "application/json"
+                )
+              );
+            }
+            if (regularFont) {
+              files.push(
+                base64ToFile(
+                  regularFont.base64,
+                  `regular-${regularFont.fileName}`,
+                  "application/json"
+                )
+              );
+            }
+            if (boldFont) {
+              files.push(
+                base64ToFile(
+                  boldFont.base64,
+                  `bold-${boldFont.fileName}`,
+                  "application/json"
+                )
+              );
+            }
+
+            tenantDataStore.setFontsData({
+              files: files,
+              defaultFontName: fontName,
+            });
+          }
+        }
       }
     },
     onError(error, variables, context) {

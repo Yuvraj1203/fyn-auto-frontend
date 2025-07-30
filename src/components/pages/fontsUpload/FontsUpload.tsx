@@ -1,15 +1,15 @@
 "use client";
 import { Error } from "@/public";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import FontDropBox from "./ImageDropBox";
 import { Button, Tooltip } from "@heroui/react";
 import { ProceedButton } from "@/components/common";
 import { useMutation } from "@tanstack/react-query";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
-import { showSnackbar } from "@/utils/utils";
+import { base64ToFile, showSnackbar } from "@/utils/utils";
 import { SetTenantInfoModel } from "@/services/models";
-import { useCurrentTenantInfoStore } from "@/store";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 import CustomTextInput, {
   CustomTextInputType,
 } from "@/components/molecules/customTextInput/CustomTextInput";
@@ -82,6 +82,7 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
     },
   ];
 
+  const tenantDataStore = useTenantDataStore();
   const [loading, setLoading] = useState(false);
   const [lightFontFile, setLightFontFile] = useState<File[]>([]);
   const [regularFontFile, setRegularFontFile] = useState<File[]>([]);
@@ -91,12 +92,38 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
   const handleSelectItemChange = (value: string | number) => {
     const selectedFont = fontDropDown.find((item, index) => item.key == value);
     setSelectedFont(selectedFont!);
+    setLightFontFile([]);
+    setRegularFontFile([]);
+    setBoldFontFile([]);
   };
+
+  useEffect(() => {
+    console.log(
+      tenantDataStore.fontsData.files,
+      "tenantDataStore.fontsData.files"
+    );
+    tenantDataStore.fontsData.files?.map((item) => {
+      if (item.name?.includes("light")) {
+        setLightFontFile([item]);
+      }
+      if (item.name?.includes("regular")) {
+        setRegularFontFile([item]);
+      }
+      if (item.name?.includes("bold")) {
+        setBoldFontFile([item]);
+      }
+    });
+    const selectedFontObject = fontDropDown.find(
+      (item) => item.key == tenantDataStore.fontsData.defaultFontName
+    );
+    setSelectedFont(selectedFontObject ?? fontDropDown[0]);
+  }, [tenantDataStore.fontsData]);
 
   const handleSubmit = () => {
     if (!selectedFont?.key)
       return showSnackbar("Please select the font", "warning");
     const formData = new FormData();
+
     if (selectedFont?.key == FontFamilyEnum.other) {
       if (
         lightFontFile.length == 0 &&
@@ -140,7 +167,7 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
       data: Record<string, any>;
     }) => {
       return makeRequest<SetTenantInfoModel>({
-        endpoint: ApiConstants.createFonts,
+        endpoint: ApiConstants.CreateFonts,
         method: HttpMethodApi.Post,
         params: sendData.params,
         data: sendData.data,
@@ -155,6 +182,54 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
     onSuccess(data, variables, context) {
       if (data.result) {
         showSnackbar(data.result.message, "success");
+        if (data.result.fontsData?.id) {
+          const fontName = data.result.fontsData.defaultFontName;
+          const fileConfigs = data.result.fontsData.files; //files
+          if (fileConfigs?.success) {
+            const files: File[] = [];
+
+            const { lightFont, regularFont, boldFont } = fileConfigs;
+
+            if (lightFont) {
+              files.push(
+                base64ToFile(
+                  lightFont.base64,
+                  lightFont.fileName.includes("light")
+                    ? lightFont.fileName
+                    : `light-${lightFont.fileName}`,
+                  "application/json"
+                )
+              );
+            }
+            if (regularFont) {
+              files.push(
+                base64ToFile(
+                  regularFont.base64,
+                  regularFont.fileName.includes("regular")
+                    ? regularFont.fileName
+                    : `regular-${regularFont.fileName}`,
+                  "application/json"
+                )
+              );
+            }
+            if (boldFont) {
+              files.push(
+                base64ToFile(
+                  boldFont.base64,
+                  boldFont.fileName.includes("bold")
+                    ? boldFont.fileName
+                    : `bold-${boldFont.fileName}`,
+                  "application/json"
+                )
+              );
+            }
+
+            tenantDataStore.setFontsData({
+              files: files,
+              defaultFontName: fontName,
+            });
+          }
+        }
         handleProceed();
       }
     },

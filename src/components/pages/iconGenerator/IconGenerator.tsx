@@ -68,7 +68,7 @@ const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
       data: Record<string, any>;
     }) => {
       return makeRequest<SetTenantInfoModel>({
-        endpoint: ApiConstants.iconGenerator,
+        endpoint: ApiConstants.IconGenerator,
         method: HttpMethodApi.Post,
         params: sendData.params,
         data: sendData.data,
@@ -104,7 +104,13 @@ const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
       >
         <div className="flex justify-between px-1.5">
           <span className="heading4 text-outline">{title}</span>
-          <Tooltip content={content} showArrow={true}>
+          <Tooltip
+            classNames={{
+              content: "p-2 w-28",
+            }}
+            content={content}
+            showArrow={true}
+          >
             <span className="p-0 text-outline cursor-pointer">
               <Error />
             </span>

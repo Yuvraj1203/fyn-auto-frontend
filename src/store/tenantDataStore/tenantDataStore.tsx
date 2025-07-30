@@ -4,6 +4,11 @@ import { ThemeColorsType } from "@/services/models/setTenantInfoModel/setTenantI
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+type FontsDataType = {
+  defaultFontName?: string;
+  files?: File[];
+};
+
 type TenantDataStoreType = {
   tenantFormInfo: TenantFormDataType;
   setTenantFormInfo: (value: TenantFormDataType) => void;
@@ -11,6 +16,8 @@ type TenantDataStoreType = {
   setFilesConfig: (value: File[]) => void;
   themeColors: ThemeColorsType;
   setThemeColors: (value: ThemeColorsType) => void;
+  fontsData: FontsDataType;
+  setFontsData: (value: FontsDataType) => void;
 };
 
 const useTenantDataStore = create<TenantDataStoreType>()(
@@ -23,6 +30,8 @@ const useTenantDataStore = create<TenantDataStoreType>()(
       setFilesConfig: (value: File[]) => set({ filesConfig: value }),
       themeColors: colors,
       setThemeColors: (value: ThemeColorsType) => set({ themeColors: value }),
+      fontsData: {},
+      setFontsData: (value: FontsDataType) => set({ fontsData: value }),
     }),
     {
       name: "tenant-data-store",
@@ -30,6 +39,7 @@ const useTenantDataStore = create<TenantDataStoreType>()(
         tenantFormInfo: state.tenantFormInfo,
         filesConfig: state.filesConfig,
         themeColors: state.themeColors,
+        fontsData: state.fontsData,
       }),
     }
   )

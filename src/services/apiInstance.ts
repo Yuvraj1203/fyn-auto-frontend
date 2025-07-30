@@ -39,7 +39,7 @@ export async function makeRequest<T>({
       method,
       headers: {
         ...headers,
-        "Content-Type": isForm ? "multipart/form-data" : "application/json",
+        ...(isForm ? {} : { "Content-Type": "application/json" }),
         Accept: "application/json",
       },
       ...(method === HttpMethodApi.Get || method === HttpMethodApi.Delete
