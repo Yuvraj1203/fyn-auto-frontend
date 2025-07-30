@@ -98,6 +98,7 @@ const TenantSteps = () => {
     },
     onSuccess(data, variables, context) {
       if (data.result) {
+        tenantDataStore.setTenantId(data.result?.id!);
         if (
           data?.result?.tenantFormData?.tenantId ==
           useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId
@@ -151,6 +152,7 @@ const TenantSteps = () => {
         } else {
           tenantDataStore.setFilesConfig([]);
         }
+        //theme
         if (data.result?.themeColors?.id) {
           const themeColorsTemp = {
             light: data.result.themeColors.light,
@@ -160,6 +162,7 @@ const TenantSteps = () => {
         } else {
           tenantDataStore.setThemeColors(colors);
         }
+        //fonts
         if (data.result.fontsData?.id) {
           const fontName = data.result.fontsData.defaultFontName;
           const fileConfigs = data.result.fontsData.files; //files
@@ -201,6 +204,40 @@ const TenantSteps = () => {
               defaultFontName: fontName,
             });
           }
+        }
+        //icons
+        // file config
+        const iconsFiles = data.result.iconsData;
+        if (iconsFiles?.success) {
+          const { appIcon, bannerIcon, notificationIcon } = iconsFiles;
+
+          const files: File[] = [];
+
+          if (appIcon) {
+            files.push(
+              base64ToFile(appIcon, "appIcon.png", "application/json")
+            );
+          }
+
+          if (bannerIcon) {
+            files.push(
+              base64ToFile(bannerIcon, "bannerIcon.png", "application/xml")
+            );
+          }
+
+          if (notificationIcon) {
+            files.push(
+              base64ToFile(
+                notificationIcon,
+                "notificationIcon.png",
+                "application/json"
+              )
+            );
+          }
+
+          tenantDataStore.setIconsData(files);
+        } else {
+          tenantDataStore.setIconsData([]);
         }
       }
     },

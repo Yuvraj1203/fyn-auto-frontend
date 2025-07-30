@@ -54,6 +54,13 @@ export type FontsDataType = {
   boldFontPath?: string;
 };
 
+export type IconsDataType = {
+  appIcon?: string;
+  bannerIcon?: string;
+  notificationIcon?: string;
+  success?: boolean;
+};
+
 export type SetTenantInfoModel = {
   id?: string;
   message: string;
@@ -62,4 +69,5 @@ export type SetTenantInfoModel = {
   fileConfigsData?: fileConfigsType;
   themeColors?: ThemeColorsType;
   fontsData?: FontsDataType;
+  iconsData?: IconsDataType;
 };

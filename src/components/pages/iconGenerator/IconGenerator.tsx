@@ -1,15 +1,15 @@
 "use client";
 import { Error } from "@/public";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import ImageDropBox from "./ImageDropBox";
 import { Tooltip } from "@heroui/react";
 import { ProceedButton } from "@/components/common";
 import { useMutation } from "@tanstack/react-query";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
-import { showSnackbar } from "@/utils/utils";
+import { base64ToFile, showSnackbar } from "@/utils/utils";
 import { SetTenantInfoModel } from "@/services/models";
-import { useCurrentTenantInfoStore } from "@/store";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 
 type DropBoxContainerProps = {
   content?: string;
@@ -23,10 +23,31 @@ type IconGeneratorProps = {
 };
 
 const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
+  const tenantDataStore = useTenantDataStore();
   const [loading, setLoading] = useState(false);
   const [appIconFile, setAppIconFile] = useState<File[]>([]);
   const [notificationIconFile, setNotificationIconFile] = useState<File[]>([]);
   const [appBannerFile, setAppBannerFile] = useState<File[]>([]);
+
+  useEffect(() => {
+    console.log(tenantDataStore.iconsData, "tenantDataStore.iconsData");
+    if (
+      tenantDataStore.tenantId ==
+      useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId
+    ) {
+      tenantDataStore.iconsData.map((item) => {
+        if (item.name?.includes("appIcon")) {
+          setAppIconFile([item]);
+        }
+        if (item.name?.includes("bannerIcon")) {
+          setAppBannerFile([item]);
+        }
+        if (item.name?.includes("notificationIcon")) {
+          setNotificationIconFile([item]);
+        }
+      });
+    }
+  }, [tenantDataStore.iconsData]);
 
   const handleSubmit = () => {
     if (
@@ -82,6 +103,38 @@ const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
     },
     onSuccess(data, variables, context) {
       if (data.result) {
+        const iconsFiles = data.result.iconsData;
+        if (iconsFiles?.success) {
+          const { appIcon, bannerIcon, notificationIcon } = iconsFiles;
+
+          const files: File[] = [];
+
+          if (appIcon) {
+            files.push(
+              base64ToFile(appIcon, "appIcon.png", "application/json")
+            );
+          }
+
+          if (bannerIcon) {
+            files.push(
+              base64ToFile(bannerIcon, "bannerIcon.png", "application/xml")
+            );
+          }
+
+          if (notificationIcon) {
+            files.push(
+              base64ToFile(
+                notificationIcon,
+                "notificationIcon.png",
+                "application/json"
+              )
+            );
+          }
+
+          tenantDataStore.setIconsData(files);
+        } else {
+          tenantDataStore.setIconsData([]);
+        }
         showSnackbar(data.result.message, "success");
         handleProceed();
       }
@@ -106,7 +159,7 @@ const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
           <span className="heading4 text-outline">{title}</span>
           <Tooltip
             classNames={{
-              content: "p-2 w-28",
+              content: "p-2 w-52 text-xs font-semibold",
             }}
             content={content}
             showArrow={true}
