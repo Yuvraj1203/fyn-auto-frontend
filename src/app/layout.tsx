@@ -3,6 +3,7 @@ import "./globals.css";
 import { Quicksand } from "next/font/google";
 import { Header, Sidebar } from "@/components/templates";
 import ClientProvider from "./providers/ClientProvider";
+import { Login } from "@/components/pages";
 
 // Import the Quicksand font from Next.js
 const quicksand = Quicksand({
@@ -23,21 +24,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const loginPage = true;
   return (
     <html lang="en">
       <body
         className={`${quicksand.className} flex flex-col bg-background h-screen`}
       >
         <ClientProvider>
-          <main className="flex gap-5 px-5 xl:px-8 ">
-            <Sidebar />
-            <div className="grow">
-              <Header />
-              <div className="flex flex-col grow p-5 bg-surface rounded-2xl">
-                {children}
+          {loginPage ? (
+            <Login />
+          ) : (
+            <main className="flex gap-5 px-5 xl:px-8 ">
+              <Sidebar />
+              <div className="grow">
+                <Header />
+                <div className="flex flex-col grow p-5 bg-surface rounded-2xl">
+                  {children}
+                </div>
               </div>
-            </div>
-          </main>
+            </main>
+          )}
         </ClientProvider>
       </body>
     </html>

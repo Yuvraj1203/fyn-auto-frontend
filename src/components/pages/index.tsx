@@ -6,3 +6,4 @@ export { default as TenantSteps } from "./tenantSteps/TenantSteps";
 export { default as ThemeGenerator } from "./themeGenerator/ThemeGenerator";
 export { default as IconGenerator } from "./iconGenerator/IconGenerator";
 export { default as FontsUpload } from "./fontsUpload/FontsUpload";
+export { default as Login } from "./authentication/login/Login";
