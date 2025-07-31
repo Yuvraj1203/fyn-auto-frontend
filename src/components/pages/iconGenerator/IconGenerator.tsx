@@ -30,7 +30,6 @@ const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
   const [appBannerFile, setAppBannerFile] = useState<File[]>([]);
 
   useEffect(() => {
-    console.log(tenantDataStore.iconsData, "tenantDataStore.iconsData");
     if (
       tenantDataStore.tenantId ==
       useCurrentTenantInfoStore.getState().currentTenantInfo.tenantId

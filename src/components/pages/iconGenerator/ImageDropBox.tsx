@@ -48,8 +48,33 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
 
   const handleFileAdd = (file: File) => {
     if (!isValidFile(file)) return;
-    setPreview(URL.createObjectURL(file));
-    setFiles([file]);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = (event) => {
+      const image = new window.Image();
+      image.src = event.target?.result as string;
+
+      image.onload = () => {
+        const width = image.width;
+        const height = image.height;
+
+        const maxWidth = 1024;
+        const maxHeight = 1024;
+
+        if (width > maxWidth || height > maxHeight) {
+          showSnackbar(
+            `Image resolution too high (${width}x${height}). Max allowed: ${maxWidth}x${maxHeight}`,
+            "warning"
+          );
+          return;
+        }
+
+        setPreview(URL.createObjectURL(file));
+        setFiles([file]);
+      };
+    };
   };
 
   const handleDrop = useCallback((event: DragEvent<HTMLDivElement>) => {
@@ -102,8 +127,6 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
       >
         {files.length > 0 && files[0] instanceof File ? (
           <CustomImage
-            width={260}
-            height={160}
             src={URL.createObjectURL(files[0])}
             alt="Preview"
             className="w-full h-full rounded-2xl"
@@ -126,7 +149,7 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
                   : "text-outline scale-100"
               } duration-400`}
             >
-              <span>max 5mb</span>
+              <span> Max allowed: 1024x1024</span>
             </p>
           </>
         )}

@@ -17,8 +17,8 @@ type CustomImageProps = {
 };
 
 const CustomImage = ({
-  width = "auto",
-  height = "auto",
+  width,
+  height,
   type = ImageType.png,
   ...props
 }: CustomImageProps) => {
@@ -42,6 +42,9 @@ const CustomImage = ({
       alt={props.alt}
       radius="none"
       className={`${props.className}`}
+      classNames={{
+        wrapper: "max-w-full max-h-full flex justify-center items-center",
+      }}
     />
   );
 };

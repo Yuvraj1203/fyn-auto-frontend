@@ -175,7 +175,9 @@ const TenantSteps = () => {
               files.push(
                 base64ToFile(
                   lightFont.base64,
-                  `light-${lightFont.fileName}`,
+                  lightFont.fileName.includes("light")
+                    ? lightFont.fileName
+                    : `light-${lightFont.fileName}`,
                   "application/json"
                 )
               );
@@ -184,7 +186,9 @@ const TenantSteps = () => {
               files.push(
                 base64ToFile(
                   regularFont.base64,
-                  `regular-${regularFont.fileName}`,
+                  regularFont.fileName.includes("regular")
+                    ? regularFont.fileName
+                    : `regular-${regularFont.fileName}`,
                   "application/json"
                 )
               );
@@ -193,7 +197,9 @@ const TenantSteps = () => {
               files.push(
                 base64ToFile(
                   boldFont.base64,
-                  `bold-${boldFont.fileName}`,
+                  boldFont.fileName.includes("bold")
+                    ? boldFont.fileName
+                    : `bold-${boldFont.fileName}`,
                   "application/json"
                 )
               );
@@ -204,6 +210,8 @@ const TenantSteps = () => {
               defaultFontName: fontName,
             });
           }
+        } else {
+          tenantDataStore.setFontsData({});
         }
         //icons
         // file config
