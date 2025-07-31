@@ -14,12 +14,14 @@ type CustomImageProps = {
   className?: string;
   type?: ImageType;
   onClick?: () => void;
+  containerStyle?: string;
 };
 
 const CustomImage = ({
   width,
   height,
   type = ImageType.png,
+  containerStyle,
   ...props
 }: CustomImageProps) => {
   if (type == ImageType.svg) {
@@ -43,7 +45,7 @@ const CustomImage = ({
       radius="none"
       className={`${props.className}`}
       classNames={{
-        wrapper: "max-w-full max-h-full flex justify-center items-center",
+        wrapper: `max-w-full max-h-full flex justify-center items-center ${containerStyle}`,
       }}
     />
   );

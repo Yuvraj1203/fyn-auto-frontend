@@ -1,5 +1,7 @@
 "use client";
+import { CustomImage } from "@/components/atoms";
 import { ColorPopover, ProceedButton } from "@/components/common";
+import { Images } from "@/public";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
@@ -462,18 +464,43 @@ const ThemeGenerator = ({ handleProceed }: ThemeGeneratorProps) => {
       <div className="flex justify-between px-5 pt-3">
         <h2 className="heading3 ">{"Playground"}</h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5">
-        {Object.entries(themeMainColors).map(([key, value]) => (
-          <ColorBox
-            key={key}
-            label={key as DisplayColorKey}
-            color={value}
-            handleThemeColorsUpdate={handleThemeMainColorsUpdate}
-            isCustomizable={true}
-          />
-        ))}
+      <div className="flex max-md:flex-col justify-between p-5">
+        <div className="flex flex-wrap md:grow md:flex-col gap-4 p-5 max-md:justify-around">
+          {Object.entries(themeMainColors).map(([key, value]) => (
+            <ColorBox
+              key={key}
+              label={key as DisplayColorKey}
+              color={value}
+              handleThemeColorsUpdate={handleThemeMainColorsUpdate}
+              isCustomizable={true}
+            />
+          ))}
+        </div>
+
+        <div className="flex gap-4 p-5 w-full md:w-2/3  justify-around">
+          <div
+            className={"h-fit w-1/2 max-w-fit flex"}
+            style={{ backgroundColor: themeColors.light.primary }}
+          >
+            <CustomImage
+              src={Images.loginScreen}
+              className={"max-h-full md:max-h-72"}
+              containerStyle={``}
+            />
+          </div>
+          <div
+            className={"h-fit w-1/2 max-w-fit flex"}
+            style={{ backgroundColor: themeColors.light.primary }}
+          >
+            <CustomImage
+              src={Images.profileScreen}
+              className={"max-h-full md:max-h-72"}
+              containerStyle={``}
+            />
+          </div>
+        </div>
       </div>
-      <h2 className="heading3 mx-5 ">{"Preview"}</h2>
+      {/* <h2 className="heading3 mx-5 ">{"Preview"}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4  gap-4 p-5 ">
         {Object.entries(themeDisplayColor.light).map(([key, value]) => (
           <ColorBox
@@ -483,7 +510,7 @@ const ThemeGenerator = ({ handleProceed }: ThemeGeneratorProps) => {
             handleThemeColorsUpdate={handleThemeColorsUpdate}
           />
         ))}
-      </div>
+      </div> */}
       <ProceedButton
         buttonType={"submit"}
         loading={loading}
@@ -515,7 +542,7 @@ const ColorBox = ({
     return (
       <div
         key={`${label}-${color}`}
-        className={`md:min-w-24 rounded-lg overflow-hidden shadow-lightShadow ${
+        className={`max-md:text-xs md:min-w-24 rounded-lg overflow-hidden shadow-lightShadow ${
           isCustomizable ? "cursor-pointer" : "cursor-default"
         }`}
       >

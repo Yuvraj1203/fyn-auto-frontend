@@ -21,4 +21,6 @@ export const Images = {
   appIcon: "/images/logo/appIcon.png",
   profile: "/images/pictures/profile.png",
   foldericon: "/images/pictures/foldericon.png",
+  profileScreen: "/images/pictures/profileScreen.png",
+  loginScreen: "/images/pictures/loginScreen.png",
 };
