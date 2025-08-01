@@ -24,27 +24,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const loginPage = true;
   return (
     <html lang="en">
       <body
         className={`${quicksand.className} flex flex-col bg-background h-screen`}
       >
-        <ClientProvider>
-          {loginPage ? (
-            <Login />
-          ) : (
-            <main className="flex gap-5 px-5 xl:px-8 ">
-              <Sidebar />
-              <div className="grow">
-                <Header />
-                <div className="flex flex-col grow p-5 bg-surface rounded-2xl">
-                  {children}
-                </div>
-              </div>
-            </main>
-          )}
-        </ClientProvider>
+        <ClientProvider>{children}</ClientProvider>
       </body>
     </html>
   );

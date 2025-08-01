@@ -4,3 +4,4 @@ export {
   type TenantFormDataType,
 } from "./setTenantInfoModel/setTenantInfoModel";
 export { type GetTenantIdByNameModel } from "./getTenantIdByNameModel/getTenantIdByNameModel";
+export { type LoginModel, type UserType } from "./loginModel/loginModel";

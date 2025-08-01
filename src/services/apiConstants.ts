@@ -12,4 +12,5 @@ export const ApiConstants = {
   DeleteFile: "api/v1/fileConfigs/deleteFile",
   CreateColors: "/api/v1/colorStep/createColors",
   IconGenerator: "/api/v1/iconGenerator/iconGenerator",
+  Login: "/api/v1/user/login",
 };

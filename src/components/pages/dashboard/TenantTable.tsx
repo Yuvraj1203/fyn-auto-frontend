@@ -25,6 +25,7 @@ import { GetTenantIdByNameModel } from "@/services/models";
 import { RefreshSvg } from "@/public";
 import { useRouter } from "next/navigation";
 import { useCurrentTenantInfoStore } from "@/store";
+import Cookies from "js-cookie";
 
 type TenantTableProps = {
   allTenants: GetTenantIdByNameModel[];
@@ -282,7 +283,12 @@ const TenantTable = ({
     currentTenantInfo.setCurrentTenantInfo(user);
     console.log(user.step, "user.step");
     currentTenantInfo.setCurrentStep(user.step!);
-    router.push("/tenant-creation");
+    Cookies.set("currentTenant", user.tenantId!, {
+      expires: 1, // 1 day
+      secure: true,
+      path: "/",
+    });
+    router.push("/dashboard/tenant-creation");
   };
 
   const renderCell = React.useCallback(

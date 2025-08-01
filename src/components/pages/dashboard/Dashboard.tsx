@@ -6,12 +6,14 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useRef, useState } from "react";
 import TenantTable from "./TenantTable";
 import { showSnackbar } from "@/utils/utils";
+import Cookies from "js-cookie";
 
 function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [allTenants, setAllTenants] = useState<GetTenantIdByNameModel[]>([]);
 
   useEffect(() => {
+    Cookies.remove("currentTenant");
     getAllTenants();
   }, []);
 

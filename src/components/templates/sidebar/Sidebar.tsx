@@ -48,12 +48,12 @@ function Sidebar() {
     {
       label: "Tenant",
       icon: <Dashboard />,
-      href: "/",
+      href: "/dashboard",
     },
     {
       label: "Tenant Creation",
       icon: <EditFull />,
-      href: "/tenant-creation",
+      href: "/dashboard/tenant-creation",
     },
     // {
     //   label: "File Config",

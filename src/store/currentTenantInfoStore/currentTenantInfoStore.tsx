@@ -22,11 +22,6 @@ const useCurrentTenantInfoStore = create<CurrentTenantInfoStore>()(
               (item) => item.status === TenantStatusEnum.ongoing
             )?.id || 1;
 
-          document.cookie = `currentTenantInfo=${JSON.stringify({
-            ...value,
-            stepId,
-          })}; path=/`;
-
           return {
             currentTenantInfo: value,
             currentStep: stepId,

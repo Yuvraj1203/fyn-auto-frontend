@@ -12,7 +12,7 @@ const FileConfig = () => {
         </p>
       </div>
       <hr className="" />
-      <FileConfigMain />
+      {/* <FileConfigMain /> */}
     </Parent>
   );
 };

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BaseModel } from "./models";
+import Cookies from "js-cookie";
 
 export enum HttpMethodApi {
   Get = "get",
@@ -33,6 +34,11 @@ export async function makeRequest<T>({
 }: RequestOptions): Promise<BaseModel<T>> {
   try {
     const isForm = data instanceof FormData;
+    const token = Cookies.get("accessTokenFyn");
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await axiosClient.request({
       url: endpoint,
@@ -61,6 +67,7 @@ export async function makeRequest<T>({
 
     return result;
   } catch (error: any) {
+    console.log(error, "error============");
     throw new Error(error?.response?.data?.message || error.message);
   }
 }

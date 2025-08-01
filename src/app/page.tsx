@@ -1,12 +1,5 @@
-import { Dashboard } from "@/components/pages";
-import { Parent } from "@/components/templates";
+import { redirect } from "next/navigation";
 
-export default function page() {
-  return (
-    <Parent>
-      <h2 className="heading2 p-5">Tenant</h2>
-      <hr className="" />
-      <Dashboard />
-    </Parent>
-  );
+export default function Home() {
+  redirect("/dashboard"); // or /dashboard/tenant-creation
 }

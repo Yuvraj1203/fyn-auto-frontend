@@ -1,16 +1,27 @@
 "use client";
 
 import { FormTextInput } from "@/components/molecules";
+import { ApiConstants } from "@/services/apiConstants";
+import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
+import { LoginModel } from "@/services/models";
+import { showSnackbar } from "@/utils/utils";
 import { Button, Checkbox } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import { useMutation } from "@tanstack/react-query";
+import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const schema = z.object({
-    username: z.string(),
-    password: z.string(),
+    username: z.string().min(3, { message: "please input valid username" }),
+    password: z
+      .string()
+      .min(4, { message: "Password should be strong and more than 3 digits" }),
   });
 
   // Infer TypeScript type from Zod
@@ -21,7 +32,41 @@ const LoginForm = () => {
   });
 
   //onSubmitting the form
-  const onSubmit = () => {};
+  const onSubmit = (data: FormSchema) => {
+    LoginApi.mutate(data);
+  };
+
+  const LoginApi = useMutation({
+    mutationFn: (sendData: Record<string, any>) => {
+      return makeRequest<LoginModel>({
+        endpoint: ApiConstants.Login,
+        method: HttpMethodApi.Post,
+        data: sendData,
+      });
+    },
+    onMutate(variables) {
+      setLoading(true);
+    },
+    onSettled(data, error, variables, context) {
+      setLoading(false);
+    },
+    onSuccess(data, variables, context) {
+      if (data.result) {
+        showSnackbar(data.result.message, "success");
+        // handleProceed();
+        Cookies.set("accessTokenFyn", data.result.accessToken!, {
+          expires: 1, // 1 day
+          secure: true,
+          path: "/",
+        });
+        localStorage.setItem("userData", JSON.stringify(data.result.user));
+        router.push("/dashboard");
+      }
+    },
+    onError(error, variables, context) {
+      showSnackbar(error.message, "danger");
+    },
+  });
 
   return (
     <FormProvider {...methods}>
@@ -45,7 +90,12 @@ const LoginForm = () => {
           </span>
         </div>
 
-        <Button color="primary" className="w-full">
+        <Button
+          type="submit"
+          isLoading={loading}
+          color="primary"
+          className="w-full"
+        >
           {"Sign in"}
         </Button>
       </form>
