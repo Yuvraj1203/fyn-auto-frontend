@@ -6,7 +6,7 @@ import LoginForm from "./LoginForm";
 const Login = () => {
   return (
     <div className="h-lvh w-lvw bg-primaryContainer flex items-center justify-center">
-      <div className="flex flex-col min-w-[60%] gap-4 md:gap-8 bg-background p-10 rounded-2xl shadow-lightShadow">
+      <div className="flex flex-col max-md:w-full max-md:mx-8 min-w-[60%] gap-4 md:gap-8 bg-background p-5 md:p-10 rounded-2xl shadow-lightShadow">
         <p className="heading2 text-primary text-center">
           {"Hi, Welcome Back"}
         </p>

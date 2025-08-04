@@ -13,9 +13,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store";
 
 const LoginForm = () => {
   const router = useRouter();
+
+  const UserStore = useUserStore();
   const [loading, setLoading] = useState(false);
   const schema = z.object({
     username: z.string().min(3, { message: "please input valid username" }),
@@ -59,7 +62,12 @@ const LoginForm = () => {
           secure: true,
           path: "/",
         });
-        localStorage.setItem("userData", JSON.stringify(data.result.user));
+        Cookies.set("refreshTokenFyn", data.result.refreshToken!, {
+          expires: 1, // 1 day
+          secure: true,
+          path: "/",
+        });
+        UserStore.setUser(data.result.user!);
         router.push("/dashboard");
       }
     },
@@ -77,15 +85,15 @@ const LoginForm = () => {
         <FormTextInput name="username" label="Username" containerStyle="" />
         <FormTextInput name="password" label="Password" containerStyle="" />
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <Checkbox
             classNames={{
-              label: "text-sm font-medium text-outline",
+              label: "text-xs md:text-sm font-medium text-outline",
             }}
           >
             {"Remember me"}
           </Checkbox>
-          <span className="text-primary text-sm font-medium cursor-pointer">
+          <span className="text-primary text-xs md:text-sm font-medium cursor-pointer">
             {"Forgot Password?"}
           </span>
         </div>

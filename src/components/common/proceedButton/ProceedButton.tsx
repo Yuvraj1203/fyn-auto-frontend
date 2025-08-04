@@ -1,6 +1,7 @@
 "use client";
 import { TenantStatusEnum } from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
-import { useCurrentTenantInfoStore } from "@/store";
+import { UserRoleEnum } from "@/services/models/loginModel/loginModel";
+import { useCurrentTenantInfoStore, useUserStore } from "@/store";
 import { Button } from "@heroui/react";
 import React, { ReactNode, useEffect, useState } from "react";
 
@@ -26,6 +27,7 @@ const ProceedButton = ({
   endContent,
   className,
 }: ProceedButtonProps) => {
+  const userStore = useUserStore().user;
   const currentStepFromStore = useCurrentTenantInfoStore(
     (state) => state.currentStep
   );
@@ -64,7 +66,9 @@ const ProceedButton = ({
 
   return (
     <div
-      className={`bg-background border-t-1 border-surface px-5 py-4 sticky z-10 bottom-0 left-0 right-0 rounded-2xl ${className}`}
+      className={`${
+        userStore.role == UserRoleEnum.viewer ? "hidden" : "flex"
+      } bg-background border-t-1 border-surface px-5 py-4 sticky z-10 bottom-0 left-0 right-0 rounded-2xl ${className}`}
     >
       {startContent && startContent}
       <Button
