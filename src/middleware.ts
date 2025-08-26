@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+function decodeJwt(token: string) {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(atob(payload));
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("accessTokenFyn");
@@ -9,6 +19,17 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(
       new URL("/authentication", request.nextUrl.origin)
     );
+  }
+
+  const payload = decodeJwt(token.value);
+
+  if (!payload || (payload.exp && Date.now() >= payload.exp * 1000)) {
+    // Token is expired
+    const response = NextResponse.redirect(
+      new URL("/authentication", request.nextUrl.origin)
+    );
+    response.cookies.delete("accessTokenFyn"); // clean up cookie
+    return response;
   }
 
   if (pathname.startsWith("/dashboard/tenant-creation")) {
