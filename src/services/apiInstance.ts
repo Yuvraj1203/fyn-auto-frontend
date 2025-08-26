@@ -67,9 +67,43 @@ export async function makeRequest<T>({
 
     return result;
   } catch (error: any) {
-    console.log(error, "error============");
+    console.log(error, error.status, "error============");
+    // if (error.status == 401) {
+    //   router.push("/authentication");
+    // }
     throw new Error(error?.response?.data?.message || error.message);
   }
+}
+
+export async function makeFileRequest({
+  endpoint,
+  method,
+  data,
+  params,
+  headers = {},
+}: RequestOptions): Promise<Blob> {
+  const token = Cookies.get("accessTokenFyn");
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const response = await axiosClient.request<Blob>({
+    url: endpoint,
+    method,
+    responseType: "blob", // 👈 IMPORTANT
+    headers: {
+      ...headers,
+      Accept: headers["Accept"] || "application/octet-stream",
+    },
+    ...(method === HttpMethodApi.Get || method === HttpMethodApi.Delete
+      ? { params: data }
+      : params
+      ? { params, data }
+      : { data }),
+  });
+
+  return response.data;
 }
 
 export async function makeRequestWithoutBaseUrl({

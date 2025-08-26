@@ -14,8 +14,9 @@ import { SetTenantInfoModel, TenantFormDataType } from "@/services/models";
 import { showSnackbar } from "@/utils/utils";
 import useCurrentTenantInfoStore from "@/store/currentTenantInfoStore/currentTenantInfoStore";
 import { ProceedButton } from "@/components/common";
-import { useTenantDataStore } from "@/store";
+import { useTenantDataStore, useUserStore } from "@/store";
 import { Spinner } from "@heroui/react";
+import { UserRoleEnum } from "@/services/models/loginModel/loginModel";
 
 type TenantInfoFormProps = {
   handleProceed: () => void;
@@ -23,12 +24,19 @@ type TenantInfoFormProps = {
 };
 
 type SelectedEnvironmentType = {
-  key: number | string;
+  key: number | EnvKeyEnum;
   label: string;
   ApiUrl: string;
 };
 
+enum EnvKeyEnum {
+  dev = "dev",
+  uat = "uat",
+  prod = "prod",
+}
+
 const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
+  const userStore = useUserStore().user;
   const currentTenantInfo = useCurrentTenantInfoStore().currentTenantInfo;
   const allTenantFormInfo = useTenantDataStore().tenantFormInfo;
   const tenantFormInfo =
@@ -38,17 +46,17 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
       : undefined;
   const envDropDown = [
     {
-      key: "dev",
+      key: EnvKeyEnum.dev,
       label: "Development",
       ApiUrl: "https://aa.fyndev.com/",
     },
     {
-      key: "uat",
+      key: EnvKeyEnum.uat,
       label: "UAT",
       ApiUrl: "https://aa.fynuat.com/",
     },
     {
-      key: "prod",
+      key: EnvKeyEnum.prod,
       label: "Production",
       ApiUrl: "https://service.fynancial.com/",
     },
@@ -126,7 +134,32 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
   };
 
   const onSubmit = (data: FormSchema) => {
-    SetTenantInfoApi.mutate(data);
+    if (userStore.role == UserRoleEnum.viewer) {
+      showSnackbar("You dont have creating tenant permissions!", "warning");
+    } else if (userStore.role == UserRoleEnum.devcreator) {
+      if (
+        selectedEnvironment?.key == EnvKeyEnum.uat ||
+        selectedEnvironment?.key == EnvKeyEnum.prod
+      ) {
+        showSnackbar(
+          "You can only create tenant for development environment, please select dev in environment!",
+          "warning"
+        );
+      } else {
+        SetTenantInfoApi.mutate(data);
+      }
+    } else if (userStore.role == UserRoleEnum.uatcreator) {
+      if (selectedEnvironment?.key == EnvKeyEnum.prod) {
+        showSnackbar(
+          "You can not create tenant for prod environment, please select other than prod in environment!",
+          "warning"
+        );
+      } else {
+        SetTenantInfoApi.mutate(data);
+      }
+    } else {
+      SetTenantInfoApi.mutate(data);
+    }
   };
 
   //set tenant info api

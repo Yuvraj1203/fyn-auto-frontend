@@ -65,26 +65,28 @@ const ProceedButton = ({
   }, []);
 
   return (
-    <div
-      className={`${
-        userStore.role == UserRoleEnum.viewer ? "hidden" : "flex"
-      } bg-background border-t-1 border-surface px-5 py-4 sticky z-10 bottom-0 left-0 right-0 rounded-2xl ${className}`}
-    >
-      {startContent && startContent}
-      <Button
-        className="min-h-10 w-full"
-        type={buttonType}
-        color="primary"
-        variant={"shadow"}
-        size={"md"}
-        onClick={() => onClick?.()}
-        isLoading={loading}
-      >
-        {buttonContent}
-      </Button>
+    <>
+      {userStore.role !== UserRoleEnum.viewer && (
+        <div
+          className={` bg-background border-t-1 border-surface px-5 py-4 sticky z-10 bottom-0 left-0 right-0 rounded-2xl ${className}`}
+        >
+          {startContent && startContent}
+          <Button
+            className="min-h-10 w-full"
+            type={buttonType}
+            color="primary"
+            variant={"shadow"}
+            size={"md"}
+            onClick={() => onClick?.()}
+            isLoading={loading}
+          >
+            {buttonContent}
+          </Button>
 
-      {endContent && endContent}
-    </div>
+          {endContent && endContent}
+        </div>
+      )}
+    </>
   );
 };
 

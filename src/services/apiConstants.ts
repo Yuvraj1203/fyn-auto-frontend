@@ -7,6 +7,7 @@ export const ApiConstants = {
   CreateFonts: "/api/v1/fontsUpload/createFonts",
   GetAllTenants: "api/v1/tenantInfo/getAllTenants",
   RemoveTenant: "api/v1/tenantInfo/removeTenant",
+  DownloadTenantFolder: "api/v1/tenantInfo/downloadTenantFolder",
   GetTenantIdByName: "api/v1/tenantInfo/getTenantIdByName",
   FileConfigsUpload: "api/v1/fileConfigs/fileConfigsUpload",
   DeleteFile: "api/v1/fileConfigs/deleteFile",

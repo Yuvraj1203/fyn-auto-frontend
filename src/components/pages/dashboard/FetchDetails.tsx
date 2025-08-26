@@ -89,7 +89,7 @@ const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
     onError(error, variables, context) {
       buttonIconRef.current = "wrong";
       setTenancyData({});
-      showSnackbar("Invalid Tenancy Name", "danger");
+      showSnackbar(error.message, "danger");
     },
   });
 

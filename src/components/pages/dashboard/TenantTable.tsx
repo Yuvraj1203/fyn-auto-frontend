@@ -31,6 +31,7 @@ type TenantTableProps = {
   allTenants: GetTenantIdByNameModel[];
   getAllTenants: () => void;
   handleDeleteTenant: (value: GetTenantIdByNameModel) => void;
+  handleGetFolder: (value: GetTenantIdByNameModel) => void;
 };
 
 type User = {
@@ -199,6 +200,7 @@ const TenantTable = ({
   allTenants,
   getAllTenants,
   handleDeleteTenant,
+  handleGetFolder,
 }: TenantTableProps) => {
   const currentTenantInfo = useCurrentTenantInfoStore();
   const router = useRouter();
@@ -341,6 +343,9 @@ const TenantTable = ({
                 <DropdownMenu>
                   <DropdownItem onClick={() => handleProceed(user)} key="view">
                     Proceed
+                  </DropdownItem>
+                  <DropdownItem onClick={() => handleGetFolder(user)} key="get">
+                    Download Zip
                   </DropdownItem>
                   <DropdownItem
                     onClick={() => handleDeleteTenant(user)}
