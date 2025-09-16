@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useRef } from "react";
 import ProfileTool from "../header/ProfileTool";
+import { Logout } from "@/components/common";
 
 type SidebarListType = {
   label: string;
@@ -94,7 +95,7 @@ function Sidebar() {
 
   return (
     <aside
-      className={`flex flex-col max-md:absolute max-md:z-50 h-lvh max-md:px-4 max-md:shadow-fullShadow max-md:bg-background pb-10 ${
+      className={`flex flex-col gap-5 max-md:absolute max-md:z-50 h-lvh max-md:px-4 max-md:shadow-fullShadow max-md:bg-background pb-10 ${
         sidebarStore.sidebarState
           ? "max-md:translate-x-[-20px]"
           : "max-md:translate-x-[-120%]"
@@ -114,6 +115,7 @@ function Sidebar() {
         {sidebarList.map((item, index) => renderSiderbarItem(item, index))}
       </nav>
       <ProfileTool />
+      <Logout />
     </aside>
   );
 }

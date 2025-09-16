@@ -9,13 +9,13 @@ import {
 } from "@heroui/react";
 import { cloneElement, ReactElement, ReactNode } from "react";
 
-type CustomModalProps = {
+type CustomModalProps<T extends object = any> = {
   title: ReactNode;
   content: ReactNode;
   closeButton?: boolean;
   actionButton?: string;
   actionButtonPress?: () => void;
-  trigger: ReactElement;
+  trigger: ReactElement<T>;
 };
 
 const CustomModal = ({
