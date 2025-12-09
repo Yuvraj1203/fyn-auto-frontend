@@ -1,6 +1,4 @@
-import { Timeline } from "@/components/common";
-import { TenantInfoForm, TenantSteps } from "@/components/pages";
-import Dashboard from "@/components/pages/dashboard/Dashboard";
+import {TenantSteps } from "@/components/pages";
 import { Parent } from "@/components/templates";
 
 function TenantCreation() {

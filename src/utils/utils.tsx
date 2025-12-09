@@ -72,12 +72,14 @@ export const proceedStepsStatus = (
 export const showSnackbar = (
   msg: string,
   type: SnackbarEnum | undefined = "default",
-  delay: number = 0
+  delay: number = 0,
+  timeout: number = 1000
 ) => {
   addToast({
     title: msg,
     color: type,
     promise: new Promise((resolve) => setTimeout(resolve, delay)),
+    timeout: timeout,
   });
 };
 

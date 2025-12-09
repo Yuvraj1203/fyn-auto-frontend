@@ -75,11 +75,11 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
       label: "Roboto",
       className: roboto.className,
     },
-    {
-      key: "other",
-      label: "Other",
-      className: "",
-    },
+    // {
+    //   key: "other",
+    //   label: "Other",
+    //   className: "",
+    // },
   ];
 
   const tenantDataStore = useTenantDataStore();

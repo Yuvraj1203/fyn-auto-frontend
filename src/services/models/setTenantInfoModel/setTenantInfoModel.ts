@@ -7,6 +7,11 @@ export type TenantFormDataType = {
   auth0ClientId?: string;
   auth0Domain?: string;
   bundleId?: string;
+  androidVersionCode?: string;
+  androidVersionName?: string;
+  iosTeamId?: string;
+  iosVersionCode?: string;
+  iosVersionName?: string;
   packageName?: string;
   sentryDsn?: string;
   tenancyName?: string;

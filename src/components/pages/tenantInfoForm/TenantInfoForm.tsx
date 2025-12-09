@@ -88,6 +88,11 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
       .trim()
       .regex(/.*auth0.com.*/, "Invalid Auth0 domain URL"),
     auth0Organization: z.string().trim().optional(),
+    androidVersionCode: z.string().min(1, "Please select version").trim(),
+    androidVersionName: z.string().min(1, "Please select version name").trim(),
+    iosTeamId: z.string().min(1, "Please select team id").trim(),
+    iosVersionCode: z.string().min(1, "Please select version").trim(),
+    iosVersionName: z.string().min(1, "Please select version name").trim(),
     bundleId: z
       .string()
       .min(1, "Bundle Id is required")
@@ -118,6 +123,11 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
       auth0ClientId: tenantFormInfo?.auth0ClientId ?? "",
       auth0Domain: tenantFormInfo?.auth0Domain ?? "",
       auth0Organization: tenantFormInfo?.auth0Organization ?? "",
+      androidVersionCode: tenantFormInfo?.androidVersionCode,
+      androidVersionName: tenantFormInfo?.androidVersionName,
+      iosTeamId: tenantFormInfo?.iosTeamId,
+      iosVersionCode: tenantFormInfo?.iosVersionCode,
+      iosVersionName: tenantFormInfo?.iosVersionName,
       bundleId: tenantFormInfo?.bundleId ?? "",
       oktaClientId: tenantFormInfo?.oktaClientId ?? "",
       oktaDomain: tenantFormInfo?.oktaDomain ?? "",
@@ -244,6 +254,36 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
               name="packageName"
               label="Package Name"
               isRequired={true}
+            />
+          </div>
+
+          <div className="flex gap-5 max-md:flex-col">
+            <FormTextInput
+              name="androidVersionCode"
+              label="Android Version Code"
+              isRequired={true}
+              type={FormTextInputType.number}
+            />
+            <FormTextInput
+              name="androidVersionName"
+              label="Android Version Name"
+              isRequired={true}
+              type={FormTextInputType.number}
+            />
+          </div>
+
+          <div className="flex gap-5 max-md:flex-col">
+            <FormTextInput
+              name="IosVersionCode"
+              label="Ios Version Code"
+              isRequired={true}
+              type={FormTextInputType.number}
+            />
+            <FormTextInput
+              name="IosVersionName"
+              label="Ios Version Name"
+              isRequired={true}
+              type={FormTextInputType.number}
             />
           </div>
 

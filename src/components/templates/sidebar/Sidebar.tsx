@@ -1,6 +1,6 @@
 "use client";
 import { CustomImage } from "@/components/atoms";
-import { Color, Dashboard, EditFull, Images, Typography } from "@/public";
+import { Color, Dashboard, EditFull, Images } from "@/public";
 import { useSidebarStateStore } from "@/store";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
