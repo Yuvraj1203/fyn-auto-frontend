@@ -144,6 +144,7 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
   };
 
   const onSubmit = (data: FormSchema) => {
+    console.log("data====>", methods.getValues());
     if (userStore.role == UserRoleEnum.viewer) {
       showSnackbar("You dont have creating tenant permissions!", "warning");
     } else if (userStore.role == UserRoleEnum.devcreator) {
@@ -262,30 +263,32 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
               name="androidVersionCode"
               label="Android Version Code"
               isRequired={true}
-              type={FormTextInputType.number}
             />
             <FormTextInput
               name="androidVersionName"
               label="Android Version Name"
               isRequired={true}
-              type={FormTextInputType.number}
             />
           </div>
 
           <div className="flex gap-5 max-md:flex-col">
             <FormTextInput
-              name="IosVersionCode"
+              name="iosVersionCode"
               label="Ios Version Code"
               isRequired={true}
-              type={FormTextInputType.number}
             />
             <FormTextInput
-              name="IosVersionName"
+              name="iosVersionName"
               label="Ios Version Name"
               isRequired={true}
-              type={FormTextInputType.number}
             />
           </div>
+
+          <FormTextInput
+            name="iosTeamId"
+            label="Ios Team ID"
+            isRequired={true}
+          />
 
           <div className="flex gap-5 max-md:flex-col">
             <FormTextInput
@@ -318,7 +321,11 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
           </div>
         </div>
 
-        <ProceedButton buttonType={"submit"} loading={loading} />
+        <ProceedButton
+          onClick={() => onSubmit(methods.getValues())}
+          buttonType={"submit"}
+          loading={loading}
+        />
       </form>
     </FormProvider>
   );
