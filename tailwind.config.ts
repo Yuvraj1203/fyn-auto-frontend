@@ -12,14 +12,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#673AB7",
-        onPrimary: "#ffffff",
-        primaryContainer: "#EDE7F6",
-        onPrimaryContainer: "#5E35B1",
-        secondary: "#2196F3",
+        secondary: "#673AB7",
         onSecondary: "#ffffff",
-        secondaryContainer: "#E3F2FD",
-        onSecondaryContainer: "#1E88E5",
+        secondaryContainer: "#EDE7F6",
+        onSecondaryContainer: "#5E35B1",
+        primary: "#2196F3",
+        onPrimary: "#ffffff",
+        primaryContainer: "#E3F2FD",
+        onPrimaryContainer: "#1E88E5",
         // tertiary: "#3c6472",
         // onTertiary: "#ffffff",
         // tertiaryContainer: "#c0e9fa",
