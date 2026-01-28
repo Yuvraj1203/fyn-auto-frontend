@@ -206,7 +206,7 @@ const TenantTable = ({
   const router = useRouter();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
-    new Set([])
+    new Set([]),
   );
   const [visibleColumns, setVisibleColumns] = React.useState<
     "all" | Set<string>
@@ -225,7 +225,7 @@ const TenantTable = ({
     if (visibleColumns === "all") return columns;
 
     return columns.filter((column) =>
-      Array.from(visibleColumns as Set<string>).includes(column.uid)
+      Array.from(visibleColumns as Set<string>).includes(column.uid),
     );
   }, [visibleColumns]);
 
@@ -234,7 +234,7 @@ const TenantTable = ({
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.tenancyName?.toLowerCase().includes(filterValue.toLowerCase())
+        user.tenancyName?.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
     if (
@@ -242,7 +242,7 @@ const TenantTable = ({
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status!)
+        Array.from(statusFilter).includes(user.status!),
       );
     }
 
@@ -292,7 +292,7 @@ const TenantTable = ({
   const renderCell = React.useCallback(
     (
       user: GetTenantIdByNameModel,
-      columnKey: keyof GetTenantIdByNameModel | "actions"
+      columnKey: keyof GetTenantIdByNameModel | "actions",
     ) => {
       const cellValue = columnKey === "actions" ? null : user[columnKey];
 
@@ -360,7 +360,7 @@ const TenantTable = ({
           return cellValue;
       }
     },
-    []
+    [],
   );
 
   const onNextPage = React.useCallback(() => {
@@ -380,7 +380,7 @@ const TenantTable = ({
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    []
+    [],
   );
 
   const onSearchChange = React.useCallback((value: string) => {
@@ -573,7 +573,7 @@ const TenantTable = ({
           descriptor as {
             column: SortableColumn;
             direction: "ascending" | "descending";
-          }
+          },
         )
       }
       topContent={topContent}
@@ -598,7 +598,7 @@ const TenantTable = ({
               <TableCell>
                 {renderCell(
                   item,
-                  columnKey as keyof GetTenantIdByNameModel | "actions"
+                  columnKey as keyof GetTenantIdByNameModel | "actions",
                 )}
               </TableCell>
             )}
