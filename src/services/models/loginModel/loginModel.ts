@@ -14,7 +14,7 @@ export type UserType = {
 };
 
 export type LoginModel = {
-  accessToken?: string;
+  accessToken: string;
   refreshToken?: string;
   tokenType?: string;
   user?: UserType;

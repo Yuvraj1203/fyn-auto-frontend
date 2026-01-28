@@ -285,11 +285,7 @@ const TenantTable = ({
     currentTenantInfo.setCurrentTenantInfo(user);
     console.log(user.step, "user.step");
     currentTenantInfo.setCurrentStep(user.step!);
-    Cookies.set("currentTenant", user.tenantId!, {
-      expires: 1, // 1 day
-      secure: true,
-      path: "/",
-    });
+    Cookies.set("currentTenant", user.tenantId!);
     router.push("/dashboard/tenant-creation");
   };
 

@@ -57,18 +57,12 @@ const LoginForm = () => {
       if (data.result) {
         showSnackbar(data.result.message, "success");
         // handleProceed();
-        Cookies.set("accessTokenFyn", data.result.accessToken!, {
-          expires: 1, // 1 day
-          secure: true,
-          path: "/",
-        });
-        Cookies.set("refreshTokenFyn", data.result.refreshToken!, {
-          expires: 1, // 1 day
-          secure: true,
-          path: "/",
-        });
+        Cookies.set("accessTokenFyn", data.result.accessToken);
+        Cookies.set("refreshTokenFyn", data.result.refreshToken!);
         UserStore.setUser(data.result.user!);
-        router.push("/dashboard");
+        setTimeout(()=>{
+          router.replace("/dashboard");
+        },500)
       }
     },
     onError(error, variables, context) {
