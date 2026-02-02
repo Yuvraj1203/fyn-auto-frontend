@@ -30,20 +30,22 @@ const variantClasses: Record<TextVariant, string> = {
   [TextVariant.custom]: "", // No default styles for custom variant
 };
 
-type TextProps = React.HTMLAttributes<HTMLElement> & {
+type TextProps<T extends React.ElementType> = {
   variant?: TextVariant;
   as?: keyof HTMLElementTagNameMap; //choose the html tag
   className?: string;
   children: React.ReactNode;
-};
+} & React.ComponentPropsWithoutRef<T>;
 
-const Text = ({
+const Text = <T extends React.ElementType = "p">({
   variant = TextVariant.body,
-  as: Component = "p",
+  as,
   className,
   children,
   ...props
-}: TextProps) => {
+}: TextProps<T>) => {
+  const Component = as || "p";
+
   return (
     <Component className={clsx(className, variantClasses[variant])} {...props}>
       {children}
