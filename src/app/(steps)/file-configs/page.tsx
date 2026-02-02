@@ -1,6 +1,4 @@
-import { FileConfigMain } from "@/components/pages";
-import { FileDropZone, Parent } from "@/components/templates";
-import React from "react";
+import { Parent } from "@/components/templates";
 
 const FileConfig = () => {
   return (

@@ -1,18 +1,18 @@
 "use client";
 import { CustomImage } from "@/components/atoms";
-import { FileDropZone } from "@/components/templates";
 import { ImageType } from "@/components/atoms/customImage/CustomImage";
-import { CloseCircle, File, TickCircle } from "@/public";
-import React, { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
-import { ApiConstants } from "@/services/apiConstants";
-import { showSnackbar } from "@/utils/utils";
-import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
-import { SetTenantInfoModel } from "@/services/models";
 import { ProceedButton } from "@/components/common";
 import { CustomModal } from "@/components/molecules";
+import { FileDropZone } from "@/components/templates";
+import { CloseCircle, File, TickCircle } from "@/public";
+import { ApiConstants } from "@/services/apiConstants";
+import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
+import { SetTenantInfoModel } from "@/services/models";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
+import { showSnackbar } from "@/utils/utils";
 import { Button } from "@heroui/react";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 type FileConfigMainProps = {
   handleProceed: () => void;
@@ -21,7 +21,7 @@ type FileConfigMainProps = {
 const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
   const tenantFilesStores = useTenantDataStore(); // store
   const currentStepFromStore = useCurrentTenantInfoStore(
-    (state) => state.currentStep
+    (state) => state.currentStep,
   );
   const [currentStep, setCurrentStep] = useState(currentStepFromStore);
 
@@ -46,7 +46,7 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
     setFiles((prev) => {
       let remainingFiles = prev.filter(
         (file) =>
-          file.name !== fileToRemove.name || file.size !== fileToRemove.size
+          file.name !== fileToRemove.name || file.size !== fileToRemove.size,
       );
       tenantFilesStores.setFilesConfig(remainingFiles);
       return remainingFiles;
@@ -56,7 +56,7 @@ const FileConfigMain = ({ handleProceed }: FileConfigMainProps) => {
   const mergeValidTTFFiles = (
     prev: File[],
     incoming: File[],
-    maxCount = 3
+    maxCount = 3,
   ): File[] => {
     const updatedMap = new Map<string, File>();
 

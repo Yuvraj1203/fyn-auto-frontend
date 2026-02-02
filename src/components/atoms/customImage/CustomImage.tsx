@@ -1,5 +1,4 @@
 import { Image } from "@heroui/react";
-import React from "react";
 
 export enum ImageType {
   png = "png",
@@ -7,7 +6,7 @@ export enum ImageType {
 }
 
 type CustomImageProps = {
-  src: string | any;
+  src: string;
   width?: number | string;
   height?: number | string;
   alt?: string;

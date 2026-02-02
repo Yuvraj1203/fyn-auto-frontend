@@ -1,5 +1,4 @@
 import { Input, Select, SelectItem } from "@heroui/react";
-import React from "react";
 
 export enum CustomTextInputType {
   text = "text",

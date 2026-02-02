@@ -1,22 +1,22 @@
 // app/components/MyZodForm.tsx
 "use client";
 
-import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { ProceedButton } from "@/components/common";
 import { FormTextInput } from "@/components/molecules";
 import { FormTextInputType } from "@/components/molecules/customTextInput/FormTextInput";
-import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { ApiConstants } from "@/services/apiConstants";
-import { SetTenantInfoModel, TenantFormDataType } from "@/services/models";
-import { showSnackbar } from "@/utils/utils";
-import useCurrentTenantInfoStore from "@/store/currentTenantInfoStore/currentTenantInfoStore";
-import { ProceedButton } from "@/components/common";
-import { useTenantDataStore, useUserStore } from "@/store";
-import { Spinner } from "@heroui/react";
+import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
+import { SetTenantInfoModel } from "@/services/models";
 import { UserRoleEnum } from "@/services/models/loginModel/loginModel";
+import { useTenantDataStore, useUserStore } from "@/store";
+import useCurrentTenantInfoStore from "@/store/currentTenantInfoStore/currentTenantInfoStore";
+import { showSnackbar } from "@/utils/utils";
+import { Spinner } from "@heroui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
 
 type TenantInfoFormProps = {
   handleProceed: () => void;
@@ -70,10 +70,10 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
 
   useEffect(() => {
     const envObject = envDropDown.find(
-      (item) => item.ApiUrl == tenantFormInfo?.apiUrl
+      (item) => item.ApiUrl == tenantFormInfo?.apiUrl,
     );
     handleSelectItemChange(
-      envObject?.key ? envObject?.key : envDropDown[0].key
+      envObject?.key ? envObject?.key : envDropDown[0].key,
     );
   }, [tenantFormInfo]);
 
@@ -154,7 +154,7 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
       ) {
         showSnackbar(
           "You can only create tenant for development environment, please select dev in environment!",
-          "warning"
+          "warning",
         );
       } else {
         SetTenantInfoApi.mutate(data);
@@ -163,7 +163,7 @@ const TenantInfoForm = ({ handleProceed, uiLoading }: TenantInfoFormProps) => {
       if (selectedEnvironment?.key == EnvKeyEnum.prod) {
         showSnackbar(
           "You can not create tenant for prod environment, please select other than prod in environment!",
-          "warning"
+          "warning",
         );
       } else {
         SetTenantInfoApi.mutate(data);

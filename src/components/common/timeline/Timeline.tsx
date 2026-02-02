@@ -1,18 +1,15 @@
 "use client";
 import { TickCircle } from "@/public";
-import {
-  StepModel,
-  TenantStatusEnum,
-} from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
+import { TenantStatusEnum } from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
 import { useCurrentTenantInfoStore } from "@/store";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Timeline = () => {
   const currentStepFromStore = useCurrentTenantInfoStore(
-    (state) => state.currentStep
+    (state) => state.currentStep,
   );
   const timelineDataFromStore = useCurrentTenantInfoStore(
-    (state) => state.currentTenantInfo
+    (state) => state.currentTenantInfo,
   );
   const [currentStep, setCurrentStep] = useState(currentStepFromStore);
   const [timelineData, setTimelineData] = useState(timelineDataFromStore);
@@ -93,15 +90,15 @@ const Timeline = () => {
                     item.status == TenantStatusEnum.completed
                       ? "text-success"
                       : item.id == currentStep
-                      ? "text-secondary"
-                      : "text-outline"
+                        ? "text-secondary"
+                        : "text-outline"
                   } font-semibold text-xs duration-400 text-nowrap`}
                 >
                   {item.label}
                 </span>
               }
             </div>
-            {index < timelineData.steps?.length! - 1 && (
+            {timelineData.steps && index < timelineData.steps.length! - 1 && (
               <span
                 className={`grow h-0.5 min-w-8 rounded-full max-md:hidden duration-400 ${
                   item.status == TenantStatusEnum.completed

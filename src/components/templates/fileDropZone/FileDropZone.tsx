@@ -1,8 +1,7 @@
 "use client";
 
-import { CustomImage } from "@/components/atoms";
-import { CloseCircle, Images, TickCircle, Upload } from "@/public";
-import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
+import { Upload } from "@/public";
+import { useTenantDataStore } from "@/store";
 import { showSnackbar } from "@/utils/utils";
 import React, {
   ChangeEvent,
@@ -44,7 +43,7 @@ const FileDropZone: FC<FileDropZoneProps> = ({
     if (!isValid) {
       showSnackbar(
         `File "${file.name}" is not a valid format (${extensions?.join(", ")})`,
-        "warning"
+        "warning",
       );
     }
 
@@ -55,8 +54,8 @@ const FileDropZone: FC<FileDropZoneProps> = ({
     const newFiles = [...prev, ...droppedFiles];
     const uniqueFiles = Array.from(
       new Map(
-        newFiles.map((file) => [`${file.name}-${file.size}`, file])
-      ).values()
+        newFiles.map((file) => [`${file.name}-${file.size}`, file]),
+      ).values(),
     );
     return uniqueFiles;
   };
@@ -76,7 +75,7 @@ const FileDropZone: FC<FileDropZoneProps> = ({
     event.preventDefault();
     setDropZoneActive(false);
     const droppedFiles = Array.from(event.dataTransfer.files).filter(
-      isValidFile
+      isValidFile,
     );
     console.log(droppedFiles);
     setFiles((prev) => uploadFilesFunction(prev, droppedFiles));
@@ -96,7 +95,7 @@ const FileDropZone: FC<FileDropZoneProps> = ({
       setDropZoneActive(true);
       event.preventDefault();
     },
-    []
+    [],
   );
 
   const handleDragLeave = useCallback(() => {

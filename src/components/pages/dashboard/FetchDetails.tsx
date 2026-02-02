@@ -1,32 +1,65 @@
 "use client";
-import { CloseCircle, TickCircle } from "@/public";
+import { CustomSelect } from "@/components/molecules";
+import { CloseCircle, ReactIcons, TickCircle } from "@/public";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { GetTenantIdByNameModel } from "@/services/models";
+import { TenantStatusEnum } from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
 import { useCurrentTenantInfoStore } from "@/store";
 import { showSnackbar } from "@/utils/utils";
 import {
   Button,
   Input,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Tooltip,
   Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Tooltip,
 } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PlusIcon } from "./TenantTable";
-import { TenantStatusEnum } from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
 
 type FetchDetailsProps = {
   getAllTenants: () => void;
+  onClose: () => void;
 };
 
-const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
+export enum EnvEnum {
+  DEV = 0,
+  FYNTEST = 1,
+  UAT = 2,
+  PROD = 3,
+  CUSTOM = 4,
+}
+
+const EnvEnumLabel: Record<EnvEnum, string> = {
+  [EnvEnum.DEV]: "DEV",
+  [EnvEnum.FYNTEST]: "FYNTEST",
+  [EnvEnum.UAT]: "UAT",
+  [EnvEnum.PROD]: "PROD",
+  [EnvEnum.CUSTOM]: "CUSTOM",
+};
+
+const envDropdown = Object.values(EnvEnum)
+  .filter((v) => typeof v === "number")
+  .map((value) => ({
+    key: value as number,
+    value: EnvEnumLabel[value as EnvEnum],
+  }));
+
+const EnvUrlMap: Record<EnvEnum, string> = {
+  [EnvEnum.DEV]: "https://aa.fyndev.com/",
+  [EnvEnum.FYNTEST]: "https://aa.fyntst.com/",
+  [EnvEnum.UAT]: "https://a.fynuat.com/",
+  [EnvEnum.PROD]: "https://service.fynancial.com/",
+  [EnvEnum.CUSTOM]: "",
+};
+
+const FetchDetails = ({ getAllTenants, onClose }: FetchDetailsProps) => {
   const currentTenantInfo = useCurrentTenantInfoStore();
 
   const [inputValue, setInputValue] = useState("");
@@ -36,6 +69,8 @@ const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
   const [animate, setAnimate] = useState("scale-0");
   const buttonIconRef = useRef<"correct" | "wrong" | null>(null);
   const addButtonRef = useRef<"inserted" | null>(null);
+  const [selectedEnv, setSelectedEnv] = useState(EnvEnum.DEV);
+  const [customUrl, setCustomUrl] = useState<string | null>();
 
   useEffect(() => {
     if (buttonIconRef.current) {
@@ -47,7 +82,12 @@ const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
   const handleTenancyCheck = () => {
     if (inputValue.trim().length > 0) {
       setAnimate("scale-0");
-      GetTenantIdByNameApi.mutate({ tenancyName: inputValue.trim() });
+      const selectedEnvUrl =
+        selectedEnv === EnvEnum.CUSTOM ? customUrl : EnvUrlMap[selectedEnv];
+      GetTenantIdByNameApi.mutate({
+        tenancyName: inputValue.trim(),
+        envUrl: selectedEnvUrl,
+      });
     }
   };
 
@@ -112,6 +152,7 @@ const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
       if (data.result) {
         showSnackbar(data.result.message, "success");
         addButtonRef.current = "inserted";
+        onClose();
         getAllTenants();
       }
     },
@@ -147,7 +188,7 @@ const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
                     className="text-lg font-bold cursor-pointer active:opacity-50 text-success"
                   >
                     {addButtonRef.current == "inserted" ? (
-                      <TickCircle />
+                      <ReactIcons.TickCircle />
                     ) : (
                       <PlusIcon />
                     )}
@@ -162,8 +203,28 @@ const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
   };
 
   return (
-    <>
-      <div className="flex max-md:flex-col gap-5 items-center">
+    <div className="flex flex-col gap-5">
+      <CustomSelect
+        data={envDropdown}
+        itemKey={"key"}
+        itemLabel={"value"}
+        label={"Select Environment"}
+        value={selectedEnv}
+        onChange={(value) => {
+          setSelectedEnv(value as EnvEnum);
+        }}
+      />
+      {selectedEnv == EnvEnum.CUSTOM && (
+        <Input
+          isRequired={true}
+          label={"API URL"}
+          type={"text"}
+          variant={"flat"}
+          size={"sm"}
+          onChange={(e) => setCustomUrl(e.target.value)}
+        />
+      )}
+      <div className="flex max-md:flex-col gap-5 items-center pb-4">
         <Input
           isRequired={true}
           label={"Tenancy Name"}
@@ -216,7 +277,7 @@ const FetchDetails = ({ getAllTenants }: FetchDetailsProps) => {
       {tenancyData.tenancyName?.toLowerCase() == inputValue.toLowerCase() && (
         <TenantTable />
       )}
-    </>
+    </div>
   );
 };
 

@@ -25,6 +25,7 @@ const PresentSegment = ({ colorValue, setColorValue }: ColorPopoverProps) => {
         {primaryColorChoices.map((item, index) => {
           return (
             <span
+              key={`${item}-${index}`}
               className={`${
                 item == colorValue ? "border-primary" : "border-none"
               } size-6 rounded-full

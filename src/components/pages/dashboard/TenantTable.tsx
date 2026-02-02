@@ -1,31 +1,31 @@
-import React from "react";
+import { CustomModal } from "@/components/molecules";
+import { ReactIcons } from "@/public";
+import { GetTenantIdByNameModel } from "@/services/models";
+import { useCurrentTenantInfoStore } from "@/store";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Input,
   Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
   Chip,
-  User,
+  ChipProps,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
   Pagination,
   Selection,
   SortDescriptor,
-  ChipProps,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  User,
 } from "@heroui/react";
-import { CustomModal } from "@/components/molecules";
-import FetchDetails from "./FetchDetails";
-import { GetTenantIdByNameModel } from "@/services/models";
-import { RefreshSvg } from "@/public";
-import { useRouter } from "next/navigation";
-import { useCurrentTenantInfoStore } from "@/store";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import React from "react";
+import FetchDetails from "./FetchDetails";
 
 type TenantTableProps = {
   allTenants: GetTenantIdByNameModel[];
@@ -468,7 +468,9 @@ const TenantTable = ({
             </Dropdown>
             <CustomModal
               title="Add Tenant"
-              content={<FetchDetails getAllTenants={getAllTenants} />}
+              children={(onClose) => (
+                <FetchDetails getAllTenants={getAllTenants} onClose={onClose} />
+              )}
               closeButton={false}
               trigger={
                 <Button color="primary" endContent={<PlusIcon />}>
@@ -487,7 +489,7 @@ const TenantTable = ({
               onClick={getAllTenants}
               className={` text-outline flex items-center justify-center size-6 shadow-lightShadow rounded-lg duration-400 cursor-pointer `}
             >
-              <RefreshSvg />
+              <ReactIcons.Refresh />
             </span>
             <label className="flex items-center text-default-400 text-small">
               Rows per page:

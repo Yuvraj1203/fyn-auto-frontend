@@ -1,19 +1,19 @@
 "use client";
-import { Error } from "@/public";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import FontDropBox from "./ImageDropBox";
-import { Button, Tooltip } from "@heroui/react";
 import { ProceedButton } from "@/components/common";
-import { useMutation } from "@tanstack/react-query";
-import { ApiConstants } from "@/services/apiConstants";
-import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
-import { base64ToFile, showSnackbar } from "@/utils/utils";
-import { SetTenantInfoModel } from "@/services/models";
-import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 import CustomTextInput, {
   CustomTextInputType,
 } from "@/components/molecules/customTextInput/CustomTextInput";
-import { Roboto, Playfair_Display, Signika_Negative } from "next/font/google";
+import { Error } from "@/public";
+import { ApiConstants } from "@/services/apiConstants";
+import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
+import { SetTenantInfoModel } from "@/services/models";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
+import { base64ToFile, showSnackbar } from "@/utils/utils";
+import { Tooltip } from "@heroui/react";
+import { useMutation } from "@tanstack/react-query";
+import { Playfair_Display, Roboto, Signika_Negative } from "next/font/google";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import FontDropBox from "./ImageDropBox";
 
 type DropBoxContainerProps = {
   content?: string;
@@ -100,7 +100,7 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
   useEffect(() => {
     console.log(
       tenantDataStore.fontsData.files,
-      "tenantDataStore.fontsData.files"
+      "tenantDataStore.fontsData.files",
     );
     tenantDataStore.fontsData.files?.map((item) => {
       if (item.name?.includes("light")) {
@@ -114,7 +114,7 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
       }
     });
     const selectedFontObject = fontDropDown.find(
-      (item) => item.key == tenantDataStore.fontsData.defaultFontName
+      (item) => item.key == tenantDataStore.fontsData.defaultFontName,
     );
     setSelectedFont(selectedFontObject ?? fontDropDown[0]);
   }, [tenantDataStore.fontsData]);
@@ -197,8 +197,8 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
                   lightFont.fileName.includes("light")
                     ? lightFont.fileName
                     : `light-${lightFont.fileName}`,
-                  "application/json"
-                )
+                  "application/json",
+                ),
               );
             }
             if (regularFont) {
@@ -208,8 +208,8 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
                   regularFont.fileName.includes("regular")
                     ? regularFont.fileName
                     : `regular-${regularFont.fileName}`,
-                  "application/json"
-                )
+                  "application/json",
+                ),
               );
             }
             if (boldFont) {
@@ -219,8 +219,8 @@ const FontsUpload = ({ handleProceed }: FontsUploadProps) => {
                   boldFont.fileName.includes("bold")
                     ? boldFont.fileName
                     : `bold-${boldFont.fileName}`,
-                  "application/json"
-                )
+                  "application/json",
+                ),
               );
             }
 

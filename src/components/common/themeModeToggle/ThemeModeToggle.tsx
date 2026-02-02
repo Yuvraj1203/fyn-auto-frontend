@@ -1,6 +1,5 @@
 "use client";
 import { Switch } from "@heroui/react";
-import { useState } from "react";
 
 type ThemeModeToggleProps = {
   isLight: boolean;
@@ -49,9 +48,7 @@ const ThemeModeToggle = ({ isLight, setIsLight }: ThemeModeToggleProps) => {
       isSelected={isLight}
       onValueChange={setIsLight}
       color="success"
-      thumbIcon={({ isSelected, className }) =>
-        isSelected ? <SunIcon /> : <MoonIcon />
-      }
+      thumbIcon={({ isSelected }) => (isSelected ? <SunIcon /> : <MoonIcon />)}
       size="md"
     />
   );

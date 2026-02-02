@@ -1,8 +1,6 @@
-import { Images, Gear } from "@/public";
-import Image from "next/image";
-import React from "react";
-import { Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { CustomImage } from "@/components/atoms";
+import { Gear, Images } from "@/public";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 
 function ProfileTool() {
   const popoverTrigger = (

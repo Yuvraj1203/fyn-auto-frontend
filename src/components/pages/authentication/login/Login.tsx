@@ -1,6 +1,3 @@
-import { CustomImage } from "@/components/atoms";
-import { Images } from "@/public";
-import React from "react";
 import LoginForm from "./LoginForm";
 
 const Login = () => {

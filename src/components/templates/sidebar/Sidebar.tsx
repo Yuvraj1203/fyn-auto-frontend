@@ -1,12 +1,12 @@
 "use client";
 import { CustomImage } from "@/components/atoms";
-import { Color, Dashboard, EditFull, Images } from "@/public";
+import { Logout } from "@/components/common";
+import { Dashboard, EditFull, Images } from "@/public";
 import { useSidebarStateStore } from "@/store";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import ProfileTool from "../header/ProfileTool";
-import { Logout } from "@/components/common";
 
 type SidebarListType = {
   label: string;
@@ -52,10 +52,15 @@ function Sidebar() {
       href: "/dashboard",
     },
     {
-      label: "Tenant Creation",
+      label: "Tenants List",
       icon: <EditFull />,
-      href: "/dashboard/tenant-creation",
+      href: "/tenant_list",
     },
+    // {
+    //   label: "Tenant Creation",
+    //   icon: <EditFull />,
+    //   href: "/dashboard/tenant-creation",
+    // },
     // {
     //   label: "File Config",
     //   icon: <EditFull />,

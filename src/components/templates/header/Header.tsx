@@ -1,11 +1,9 @@
 "use client";
-import { MenuSvg } from "@/public";
-import React from "react";
-import NotificationBell from "./NotificationBell";
-import ProfileTool from "./ProfileTool";
-import { useSidebarStateStore } from "@/store";
 import { Timeline } from "@/components/common";
+import { MenuSvg } from "@/public";
+import { useSidebarStateStore } from "@/store";
 import { usePathname } from "next/navigation";
+import NotificationBell from "./NotificationBell";
 
 function Header() {
   const pathname = usePathname();

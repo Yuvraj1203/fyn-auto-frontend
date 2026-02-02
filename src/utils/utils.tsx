@@ -27,7 +27,7 @@ type UpdateStepsStatusReturn = {
 export const proceedStepsStatus = (
   steps: Step[],
   step: number,
-  router: ReturnType<typeof useRouter>
+  router: ReturnType<typeof useRouter>,
 ): UpdateStepsStatusReturn => {
   const updatedSteps = [...steps];
 
@@ -36,7 +36,7 @@ export const proceedStepsStatus = (
 
   //change onGoing to pending
   let anyOngoing = updatedSteps.findIndex(
-    (s, index) => s.status === TenantStatusEnum.ongoing
+    (s, index) => s.status === TenantStatusEnum.ongoing,
   );
 
   if (anyOngoing > -1) {
@@ -45,13 +45,13 @@ export const proceedStepsStatus = (
 
   // Look for the next pending step *after* the current one
   let nextPendingIndex = updatedSteps.findIndex(
-    (s, index) => index > step && s.status === TenantStatusEnum.pending
+    (s, index) => index > step && s.status === TenantStatusEnum.pending,
   );
 
   // If not found, cycle to first pending step
   if (nextPendingIndex === -1) {
     nextPendingIndex = updatedSteps.findIndex(
-      (s) => s.status === TenantStatusEnum.pending
+      (s) => s.status === TenantStatusEnum.pending,
     );
   }
 
@@ -73,7 +73,7 @@ export const showSnackbar = (
   msg: string,
   type: SnackbarEnum | undefined = "default",
   delay: number = 0,
-  timeout: number = 1000
+  timeout: number = 1000,
 ) => {
   addToast({
     title: msg,
@@ -86,7 +86,7 @@ export const showSnackbar = (
 export function base64ToFile(
   base64: string,
   fileName: string,
-  mimeType: string
+  mimeType: string,
 ): File {
   const byteString = atob(base64);
   const ab = new ArrayBuffer(byteString.length);

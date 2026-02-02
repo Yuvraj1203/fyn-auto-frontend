@@ -2,7 +2,7 @@
 import { CustomImage } from "@/components/atoms";
 import { Delete, Gallery, UploadButton } from "@/public";
 import { showSnackbar } from "@/utils/utils";
-import { Button, Image } from "@heroui/react";
+import { Button } from "@heroui/react";
 import React, {
   ChangeEvent,
   Dispatch,
@@ -39,7 +39,7 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
     if (!isValid) {
       showSnackbar(
         `File "${file.name}" is not a valid format (${extensions?.join(", ")})`,
-        "warning"
+        "warning",
       );
     }
 
@@ -66,7 +66,7 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
         if (width > maxWidth || height > maxHeight) {
           showSnackbar(
             `Image resolution too high (${width}x${height}). Max allowed: ${maxWidth}x${maxHeight}`,
-            "warning"
+            "warning",
           );
           return;
         }
@@ -98,7 +98,7 @@ const ImageDropBox: FC<FileDropZoneProps> = ({
       setDropZoneActive(true);
       event.preventDefault();
     },
-    []
+    [],
   );
 
   const handleDragLeave = useCallback(() => {

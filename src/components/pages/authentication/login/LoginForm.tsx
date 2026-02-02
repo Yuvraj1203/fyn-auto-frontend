@@ -4,16 +4,16 @@ import { FormTextInput } from "@/components/molecules";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
 import { LoginModel } from "@/services/models";
+import { useUserStore } from "@/store";
 import { showSnackbar } from "@/utils/utils";
 import { Button, Checkbox } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store";
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -60,9 +60,9 @@ const LoginForm = () => {
         Cookies.set("accessTokenFyn", data.result.accessToken);
         Cookies.set("refreshTokenFyn", data.result.refreshToken!);
         UserStore.setUser(data.result.user!);
-        setTimeout(()=>{
+        setTimeout(() => {
           router.replace("/dashboard");
-        },500)
+        }, 500);
       }
     },
     onError(error, variables, context) {

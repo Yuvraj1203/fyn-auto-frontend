@@ -3,7 +3,7 @@ import { TenantStatusEnum } from "@/services/models/getTenantIdByNameModel/getTe
 import { UserRoleEnum } from "@/services/models/loginModel/loginModel";
 import { useCurrentTenantInfoStore, useUserStore } from "@/store";
 import { Button } from "@heroui/react";
-import React, { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 type ProceedButtonProps = {
   loading?: boolean;
@@ -29,10 +29,10 @@ const ProceedButton = ({
 }: ProceedButtonProps) => {
   const userStore = useUserStore().user;
   const currentStepFromStore = useCurrentTenantInfoStore(
-    (state) => state.currentStep
+    (state) => state.currentStep,
   );
   const timelineDataFromStore = useCurrentTenantInfoStore(
-    (state) => state.currentTenantInfo
+    (state) => state.currentTenantInfo,
   );
   const [currentStep, setCurrentStep] = useState(currentStepFromStore);
   const [timelineData, setTimelineData] = useState(timelineDataFromStore);
@@ -50,7 +50,7 @@ const ProceedButton = ({
     const isAnyPending = useCurrentTenantInfoStore
       .getState()
       .currentTenantInfo.steps?.findIndex(
-        (item) => item.status == TenantStatusEnum.pending
+        (item) => item.status == TenantStatusEnum.pending,
       );
     if (isAnyPending! > -1) {
       setButtonContent(ButtonContentEnum.proceed);
@@ -62,7 +62,7 @@ const ProceedButton = ({
     } else {
       setButtonContent(ButtonContentEnum.proceed);
     }
-  }, []);
+  }, [currentStep, timelineData?.status, timelineData?.steps]);
 
   return (
     <>

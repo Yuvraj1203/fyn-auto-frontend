@@ -6,12 +6,12 @@ import {
   makeRequest,
 } from "@/services/apiInstance";
 import { GetTenantIdByNameModel } from "@/services/models/getTenantIdByNameModel/getTenantIdByNameModel";
-import { useMutation } from "@tanstack/react-query";
-import React, { useEffect, useRef, useState } from "react";
-import TenantTable from "./TenantTable";
 import { showSnackbar } from "@/utils/utils";
-import Cookies from "js-cookie";
 import { Spinner } from "@heroui/react";
+import { useMutation } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import TenantTable from "./TenantTable";
 
 function Dashboard() {
   const [loading, setLoading] = useState(false);

@@ -1,15 +1,15 @@
 "use client";
-import { Error } from "@/public";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import ImageDropBox from "./ImageDropBox";
-import { Tooltip } from "@heroui/react";
 import { ProceedButton } from "@/components/common";
-import { useMutation } from "@tanstack/react-query";
+import { Error } from "@/public";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
-import { base64ToFile, showSnackbar } from "@/utils/utils";
 import { SetTenantInfoModel } from "@/services/models";
 import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
+import { base64ToFile, showSnackbar } from "@/utils/utils";
+import { Tooltip } from "@heroui/react";
+import { useMutation } from "@tanstack/react-query";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import ImageDropBox from "./ImageDropBox";
 
 type DropBoxContainerProps = {
   content?: string;
@@ -110,13 +110,13 @@ const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
 
           if (appIcon) {
             files.push(
-              base64ToFile(appIcon, "appIcon.png", "application/json")
+              base64ToFile(appIcon, "appIcon.png", "application/json"),
             );
           }
 
           if (bannerIcon) {
             files.push(
-              base64ToFile(bannerIcon, "bannerIcon.png", "application/xml")
+              base64ToFile(bannerIcon, "bannerIcon.png", "application/xml"),
             );
           }
 
@@ -125,8 +125,8 @@ const IconGenerator = ({ handleProceed }: IconGeneratorProps) => {
               base64ToFile(
                 notificationIcon,
                 "notificationIcon.png",
-                "application/json"
-              )
+                "application/json",
+              ),
             );
           }
 

@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { Quicksand } from "next/font/google";
-import { Header, Sidebar } from "@/components/templates";
+import "./globals.css";
 import ClientProvider from "./providers/ClientProvider";
-import { Login } from "@/components/pages";
 
 // Import the Quicksand font from Next.js
 const quicksand = Quicksand({

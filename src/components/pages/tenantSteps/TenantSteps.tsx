@@ -1,22 +1,22 @@
 "use client";
-import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
-import React, { useEffect, useState } from "react";
-import TenantInfoForm from "../tenantInfoForm/TenantInfoForm";
-import FileConfigMain from "../file-configs/FileConfigMain";
-import ThemeGenerator, { colors } from "../themeGenerator/ThemeGenerator";
-import IconGenerator from "../iconGenerator/IconGenerator";
-import FontsUpload from "../fontsUpload/FontsUpload";
-import { base64ToFile, proceedStepsStatus, showSnackbar } from "@/utils/utils";
-import { useMutation } from "@tanstack/react-query";
-import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
+import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
+import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
+import { base64ToFile, proceedStepsStatus, showSnackbar } from "@/utils/utils";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import FileConfigMain from "../file-configs/FileConfigMain";
+import FontsUpload from "../fontsUpload/FontsUpload";
+import IconGenerator from "../iconGenerator/IconGenerator";
+import TenantInfoForm from "../tenantInfoForm/TenantInfoForm";
+import ThemeGenerator, { colors } from "../themeGenerator/ThemeGenerator";
 
 const TenantSteps = () => {
   const router = useRouter(); // router used in procceed
   const currentStepFromStore = useCurrentTenantInfoStore(
-    (state) => state.currentStep
+    (state) => state.currentStep,
   );
   const tenantDataStore = useTenantDataStore();
   const [currentStep, setCurrentStep] = useState(currentStepFromStore);
@@ -39,7 +39,7 @@ const TenantSteps = () => {
     const stepsData = proceedStepsStatus(
       useCurrentTenantInfoStore.getState()?.currentTenantInfo?.steps!,
       useCurrentTenantInfoStore.getState()?.currentStep - 1,
-      router
+      router,
     );
     UpdateTenantStepApi.mutate({
       params: {
@@ -123,8 +123,8 @@ const TenantSteps = () => {
               base64ToFile(
                 googleServicesJson,
                 "google-services.json",
-                "application/json"
-              )
+                "application/json",
+              ),
             );
           }
 
@@ -133,8 +133,8 @@ const TenantSteps = () => {
               base64ToFile(
                 googleServiceInfoPlist,
                 "GoogleService-Info.plist",
-                "application/xml"
-              )
+                "application/xml",
+              ),
             );
           }
 
@@ -143,8 +143,8 @@ const TenantSteps = () => {
               base64ToFile(
                 firebaseAdminsdkJson,
                 "firebase-adminsdk.json",
-                "application/json"
-              )
+                "application/json",
+              ),
             );
           }
 
@@ -178,8 +178,8 @@ const TenantSteps = () => {
                   lightFont.fileName.includes("light")
                     ? lightFont.fileName
                     : `light-${lightFont.fileName}`,
-                  "application/json"
-                )
+                  "application/json",
+                ),
               );
             }
             if (regularFont) {
@@ -189,8 +189,8 @@ const TenantSteps = () => {
                   regularFont.fileName.includes("regular")
                     ? regularFont.fileName
                     : `regular-${regularFont.fileName}`,
-                  "application/json"
-                )
+                  "application/json",
+                ),
               );
             }
             if (boldFont) {
@@ -200,8 +200,8 @@ const TenantSteps = () => {
                   boldFont.fileName.includes("bold")
                     ? boldFont.fileName
                     : `bold-${boldFont.fileName}`,
-                  "application/json"
-                )
+                  "application/json",
+                ),
               );
             }
 
@@ -223,13 +223,13 @@ const TenantSteps = () => {
 
           if (appIcon) {
             files.push(
-              base64ToFile(appIcon, "appIcon.png", "application/json")
+              base64ToFile(appIcon, "appIcon.png", "application/json"),
             );
           }
 
           if (bannerIcon) {
             files.push(
-              base64ToFile(bannerIcon, "bannerIcon.png", "application/xml")
+              base64ToFile(bannerIcon, "bannerIcon.png", "application/xml"),
             );
           }
 
@@ -238,8 +238,8 @@ const TenantSteps = () => {
               base64ToFile(
                 notificationIcon,
                 "notificationIcon.png",
-                "application/json"
-              )
+                "application/json",
+              ),
             );
           }
 

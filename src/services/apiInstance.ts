@@ -1,6 +1,6 @@
 import axios from "axios";
-import { BaseModel } from "./models";
 import Cookies from "js-cookie";
+import { BaseModel } from "./models";
 
 export enum HttpMethodApi {
   Get = "get",
@@ -51,8 +51,8 @@ export async function makeRequest<T>({
       ...(method === HttpMethodApi.Get || method === HttpMethodApi.Delete
         ? { params: data }
         : params
-        ? { params, data }
-        : { data }),
+          ? { params, data }
+          : { data }),
     });
 
     if (withoutBaseModel) {
@@ -99,8 +99,8 @@ export async function makeFileRequest({
     ...(method === HttpMethodApi.Get || method === HttpMethodApi.Delete
       ? { params: data }
       : params
-      ? { params, data }
-      : { data }),
+        ? { params, data }
+        : { data }),
   });
 
   return response.data;

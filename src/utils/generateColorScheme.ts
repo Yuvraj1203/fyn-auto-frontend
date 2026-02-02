@@ -1,10 +1,7 @@
-import { ColorKey } from "@/components/pages/themeGenerator/ThemeGenerator";
-import { ThemeColors } from "@heroui/react";
 import {
   argbFromHex,
   hexFromArgb,
   themeFromSourceColor,
-  CustomColor,
 } from "@material/material-color-utilities";
 
 type Input = {

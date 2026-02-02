@@ -1,15 +1,6 @@
 "use client";
-import { CustomImage } from "@/components/atoms";
-import {
-  CloseCircle,
-  Delete,
-  File,
-  Gallery,
-  Upload,
-  UploadButton,
-} from "@/public";
+import { CloseCircle, File, Upload } from "@/public";
 import { showSnackbar } from "@/utils/utils";
-import { Button, Image } from "@heroui/react";
 import React, {
   ChangeEvent,
   Dispatch,
@@ -45,7 +36,7 @@ const FontDropBox: FC<FileDropZoneProps> = ({
     if (!isValid) {
       showSnackbar(
         `File "${file.name}" is not a valid format (${extensions?.join(", ")})`,
-        "warning"
+        "warning",
       );
     }
 
@@ -78,7 +69,7 @@ const FontDropBox: FC<FileDropZoneProps> = ({
       setDropZoneActive(true);
       event.preventDefault();
     },
-    []
+    [],
   );
 
   const handleDragLeave = useCallback(() => {

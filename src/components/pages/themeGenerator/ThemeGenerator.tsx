@@ -4,16 +4,15 @@ import { ColorPopover, ProceedButton } from "@/components/common";
 import { Images } from "@/public";
 import { ApiConstants } from "@/services/apiConstants";
 import { HttpMethodApi, makeRequest } from "@/services/apiInstance";
-import { GetTenantIdByNameModel, SetTenantInfoModel } from "@/services/models";
+import { SetTenantInfoModel } from "@/services/models";
 import { useCurrentTenantInfoStore, useTenantDataStore } from "@/store";
 import {
   generateColorScheme,
   getContrastText,
 } from "@/utils/generateColorScheme";
-import { proceedStepsStatus, showSnackbar } from "@/utils/utils";
+import { showSnackbar } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type ColorBoxProps = {
   label: DisplayColorKey;
@@ -270,7 +269,7 @@ const displayColor = {
 };
 
 const getPairedColorKey = (
-  key: DisplayColorKey
+  key: DisplayColorKey,
 ): DisplayColorKey | undefined => {
   const pairMap: Record<DisplayColorKey, DisplayColorKey> = {
     primary: "onPrimary",
@@ -319,7 +318,7 @@ const ThemeGenerator = ({ handleProceed }: ThemeGeneratorProps) => {
   const [themeColors, setThemeColors] = useState(
     themeColorStore.themeColors.light?.primary
       ? { ...(themeColorStore.themeColors as ThemeColorsSetType) }
-      : { ...colors }
+      : { ...colors },
   );
   const [themeDisplayColor, setThemeDisplayColor] = useState({
     ...displayColor,
@@ -329,7 +328,7 @@ const ThemeGenerator = ({ handleProceed }: ThemeGeneratorProps) => {
   //display color gets set by colors accordingly as display color doesnt have all the keys
   const pickColorKeys = (
     source: Record<string, any>,
-    keys: (keyof DisplayColor)[]
+    keys: (keyof DisplayColor)[],
   ): DisplayColor =>
     Object.fromEntries(keys.map((key) => [key, source[key]])) as DisplayColor;
 
